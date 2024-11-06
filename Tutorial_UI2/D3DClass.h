@@ -45,8 +45,6 @@ public:
 
 	void ResetDepthStencilState();
 	void TurnZBufferOff();
-	void TurnMirror();
-	void TurnMask();
 
 	void EnableAlphaBlending();
 	void DisableAlphaBlending();

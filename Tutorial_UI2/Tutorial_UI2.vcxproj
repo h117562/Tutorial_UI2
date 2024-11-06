@@ -147,7 +147,9 @@
     <ClCompile Include="UIManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AlignmentManager.h" />
     <ClInclude Include="ApplicationClass.h" />
+    <ClInclude Include="Button.h" />
     <ClInclude Include="CameraClass.h" />
     <ClInclude Include="ColorShaderClass.h" />
     <ClInclude Include="D3DClass.h" />
@@ -158,8 +160,10 @@
     <ClInclude Include="InputClass.h" />
     <ClInclude Include="RectangleModel.h" />
     <ClInclude Include="ShaderManager.h" />
+    <ClInclude Include="Slider.h" />
     <ClInclude Include="SystemClass.h" />
     <ClInclude Include="TextClass.h" />
+    <ClInclude Include="Textfield.h" />
     <ClInclude Include="TextureShaderClass.h" />
     <ClInclude Include="UIManager.h" />
   </ItemGroup>

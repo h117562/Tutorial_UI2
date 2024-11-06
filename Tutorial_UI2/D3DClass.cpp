@@ -21,6 +21,90 @@ D3DClass::D3DClass()
 
 D3DClass::~D3DClass()
 {
+	if (m_alphaDisableBlendingState)
+	{
+		m_alphaDisableBlendingState->Release();
+		m_alphaDisableBlendingState = 0;
+	}
+
+	if (m_alphaEnableBlendingState)
+	{
+		m_alphaEnableBlendingState->Release();
+		m_alphaEnableBlendingState = 0;
+	}
+
+	if (m_mirrorState)
+	{
+		m_mirrorState->Release();
+		m_mirrorState = 0;
+	}
+
+	if (m_maskState)
+	{
+		m_maskState->Release();
+		m_maskState = 0;
+	}
+
+	if (m_depthDisabledStencilState)
+	{
+		m_depthDisabledStencilState->Release();
+		m_depthDisabledStencilState = 0;
+	}
+
+	if (m_rasterStateWireframe)
+	{
+		m_rasterStateWireframe->Release();
+		m_rasterStateWireframe = 0;
+	}
+
+	if (m_rasterState)
+	{
+		m_rasterState->Release();
+		m_rasterState = 0;
+	}
+
+	if (m_depthStencilView)
+	{
+		m_depthStencilView->Release();
+		m_depthStencilView = 0;
+	}
+
+	if (m_depthStencilState)
+	{
+		m_depthStencilState->Release();
+		m_depthStencilState = 0;
+	}
+
+	if (m_depthStencilBuffer)
+	{
+		m_depthStencilBuffer->Release();
+		m_depthStencilBuffer = 0;
+	}
+
+	if (m_renderTargetView)
+	{
+		m_renderTargetView->Release();
+		m_renderTargetView = 0;
+	}
+
+	if (m_deviceContext)
+	{
+		m_deviceContext->Release();
+		m_deviceContext = 0;
+	}
+
+	if (m_device)
+	{
+		m_device->Release();
+		m_device = 0;
+	}
+
+	if (m_swapChain)
+	{
+		m_swapChain->Release();
+		m_swapChain = 0;
+	}
+
 }
 
 D3DClass::D3DClass(const D3DClass &other)
@@ -481,90 +565,6 @@ bool D3DClass::Initialize(HWND hwnd)
 
 void D3DClass::Shutdown()
 {
-	if (m_alphaDisableBlendingState)
-	{
-		m_alphaDisableBlendingState->Release();
-		m_alphaDisableBlendingState = 0;
-	}
-
-	if (m_alphaEnableBlendingState)
-	{
-		m_alphaEnableBlendingState->Release();
-		m_alphaEnableBlendingState = 0;
-	}
-
-	if (m_mirrorState)
-	{
-		m_mirrorState->Release();
-		m_mirrorState = 0;
-	}
-
-	if (m_maskState)
-	{
-		m_maskState->Release();
-		m_maskState = 0;
-	}
-
-	if (m_depthDisabledStencilState)
-	{
-		m_depthDisabledStencilState->Release();
-		m_depthDisabledStencilState = 0;
-	}
-
-	if (m_rasterStateWireframe)
-	{
-		m_rasterStateWireframe->Release();
-		m_rasterStateWireframe = 0;
-	}
-
-	if (m_rasterState)
-	{
-		m_rasterState->Release();
-		m_rasterState = 0;
-	}
-
-	if (m_depthStencilView)
-	{
-		m_depthStencilView->Release();
-		m_depthStencilView = 0;
-	}
-
-	if (m_depthStencilState)
-	{
-		m_depthStencilState->Release();
-		m_depthStencilState = 0;
-	}
-
-	if (m_depthStencilBuffer)
-	{
-		m_depthStencilBuffer->Release();
-		m_depthStencilBuffer = 0;
-	}
-
-	if (m_renderTargetView)
-	{
-		m_renderTargetView->Release();
-		m_renderTargetView = 0;
-	}
-
-	if (m_deviceContext)
-	{
-		m_deviceContext->Release();
-		m_deviceContext = 0;
-	}
-
-	if (m_device)
-	{
-		m_device->Release();
-		m_device = 0;
-	}
-
-	if (m_swapChain)
-	{
-		m_swapChain->Release();
-		m_swapChain = 0;
-	}
-
 	return;
 }
 
@@ -578,10 +578,10 @@ void D3DClass::BeginScene(float r, float g, float b, float a)
 	color[2] = b;
 	color[3] = a;
 
-	//백 버퍼 클리어
+	//백 버퍼 초기화
 	m_deviceContext->ClearRenderTargetView(m_renderTargetView, color);
 
-	//깊이 버퍼 클리어
+	//깊이 버퍼 초기화
 	m_deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
 	return;
@@ -661,19 +661,6 @@ void D3DClass::ResetDepthStencilState()
 void D3DClass::TurnZBufferOff()
 {
 	m_deviceContext->OMSetDepthStencilState(m_depthDisabledStencilState, 1);
-	return;
-}
-
-void D3DClass::TurnMirror()
-{
-	m_deviceContext->OMSetDepthStencilState(m_mirrorState, 1);
-	return;
-}
-
-void D3DClass::TurnMask()
-{
-	m_deviceContext->OMSetDepthStencilState(m_maskState, 1);
-	m_deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_STENCIL, 1.0f, 0);
 	return;
 }
 

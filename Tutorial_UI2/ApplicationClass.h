@@ -10,7 +10,6 @@
 #include "TextClass.h"
 
 #include "RectangleModel.h"
-#include "MirrorModel.h"
 
 class ApplicationClass
 {
@@ -35,6 +34,5 @@ private:
 	UIManager* m_uiManager;
 
 	RectangleModel* m_rectangle;
-	MirrorModel* m_mirror;
 };
 #endif

@@ -28,37 +28,10 @@ public:
 		m_margin = DirectX::XMFLOAT2(0.0f, 0.0f);
 		m_align = ALIGNMENT_CENTER;
 
-		m_vertices = new DirectX::XMFLOAT3[4];
-
-		m_vertices[0] = DirectX::XMFLOAT3(-1.0f, 1.0f, 0.0f);
-		m_vertices[1] = DirectX::XMFLOAT3(1.0f, 1.0f, 0.0f);
-		m_vertices[2] = DirectX::XMFLOAT3(-1.0f, -1.0f, 0.0f);
-		m_vertices[3] = DirectX::XMFLOAT3(1.0f, -1.0f, 0.0f);
-
-		m_indices = new unsigned int[6];
-
-		m_indices[0] = 0;
-		m_indices[1] = 3;
-		m_indices[2] = 2;
-		m_indices[3] = 3;
-		m_indices[4] = 0;
-		m_indices[5] = 1;
-
 	}
 
 	~RectTransform()
 	{
-		if (m_vertices)
-		{
-			delete[] m_vertices;
-			m_vertices = nullptr;
-		}
-
-		if (m_indices)
-		{
-			delete[] m_indices;;
-			m_indices = nullptr;
-		}
 	}
 
 	//위치 설정
@@ -122,9 +95,6 @@ private:
 	DirectX::XMFLOAT3 m_scale;
 	DirectX::XMFLOAT2 m_margin;
 	unsigned int m_align;
-
-	DirectX::XMFLOAT3* m_vertices;
-	unsigned int* m_indices;
 
 };
 

@@ -69,9 +69,6 @@
     <ClCompile Include="CameraClass.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="RectangleModel.cpp">
-      <Filter>Model</Filter>
-    </ClCompile>
     <ClCompile Include="SystemClass.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -118,9 +115,6 @@
     </ClInclude>
     <ClInclude Include="DebugInfo.h">
       <Filter>UI</Filter>
-    </ClInclude>
-    <ClInclude Include="RectangleModel.h">
-      <Filter>Model</Filter>
     </ClInclude>
     <ClInclude Include="ShaderManager.h">
       <Filter>Shader</Filter>

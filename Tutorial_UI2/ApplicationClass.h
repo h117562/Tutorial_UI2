@@ -9,8 +9,6 @@
 #include "UIManager.h"
 #include "TextClass.h"
 
-#include "RectangleModel.h"
-
 class ApplicationClass
 {
 public:
@@ -32,7 +30,5 @@ private:
 	ShaderManager* m_ShaderManager;
 	CameraClass* m_CameraClass;
 	UIManager* m_uiManager;
-
-	RectangleModel* m_rectangle;
 };
 #endif

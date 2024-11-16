@@ -8,6 +8,7 @@
 #include "D3DClass.h"
 #include "textclass.h"
 #include "CameraClass.h"
+#include "InputClass.h"
 
 class DebugInfo
 {
@@ -17,7 +18,7 @@ public:
 	DebugInfo(const DebugInfo&);
 
 	bool Initialize(D3DClass*);
-	void Render(TextClass*, CameraClass*);
+	void Render(TextClass*, CameraClass*, InputClass*);
 	void Shutdown();
 private:
 	void GetFps();
@@ -34,7 +35,7 @@ private:
 	DirectX::XMINT3 m_previousPos, m_previousRot;
 	wchar_t m_stringPX[16], m_stringPY[16], m_stringPZ[16];
 	wchar_t m_stringRX[16], m_stringRY[16], m_stringRZ[16];
-
+	wchar_t m_stringMX[16], m_stringMY[16];
 };
 
 #endif

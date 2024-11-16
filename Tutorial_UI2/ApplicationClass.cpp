@@ -7,8 +7,6 @@ ApplicationClass::ApplicationClass()
 	m_uiManager = 0;
 	m_TextClass = 0;
 	m_ShaderManager = 0;
-
-	m_rectangle = 0;
 }
 
 ApplicationClass::~ApplicationClass()
@@ -88,32 +86,11 @@ bool ApplicationClass::Initialize(HWND hwnd)
 	//기본 뷰 매트릭스 초기화
 	m_CameraClass->SetBaseViewMatrix();
 
-
-	m_rectangle = new RectangleModel;
-	if (!m_rectangle)
-	{
-		return false;
-	}
-
-	result = m_rectangle->Initialize(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext());
-	if (!result)
-	{
-		MessageBox(hwnd, L"Rect Initialize Failed", L"Error", MB_OK);
-		return false;
-	}
-
 	return result;
 }
 
 void ApplicationClass::Shutdown()
 {
-
-	if (m_rectangle)
-	{
-		m_rectangle->Shutdown();
-		delete m_rectangle;
-		m_rectangle = 0;
-	}
 
 	if (m_uiManager)
 	{
@@ -200,18 +177,8 @@ void ApplicationClass::Render(HWND hwnd, InputClass* pInputClass)
 	//2D RenderTarget 초기화
 	m_TextClass->BeginDraw();
 
-	XMMATRIX modelWorld, view, proj;
-
 	//뷰 매트릭스 업데이트
 	m_CameraClass->Render();
-
-	modelWorld = XMMatrixIdentity();
-	m_CameraClass->GetViewMatrix(view);
-	m_Direct3D->GetProjectionMatrix(proj);
-
-	//오리지널 모델 그리기
-	m_ShaderManager->GetTextureShader()->Render(m_Direct3D->GetDeviceContext(), modelWorld, view, proj);
-	m_rectangle->Render(m_Direct3D->GetDeviceContext());
 
 	//UI 렌더링
 	m_uiManager->Frame(m_Direct3D, hwnd, m_ShaderManager, m_TextClass, m_CameraClass, pInputClass);

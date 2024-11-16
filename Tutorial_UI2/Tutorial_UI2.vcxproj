@@ -139,7 +139,6 @@
     <ClCompile Include="FrameTimer.cpp" />
     <ClCompile Include="InputClass.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="RectangleModel.cpp" />
     <ClCompile Include="ShaderManager.cpp" />
     <ClCompile Include="SystemClass.cpp" />
     <ClCompile Include="TextClass.cpp" />
@@ -158,7 +157,6 @@
     <ClInclude Include="Global.h" />
     <ClInclude Include="GraphicStructures.h" />
     <ClInclude Include="InputClass.h" />
-    <ClInclude Include="RectangleModel.h" />
     <ClInclude Include="ShaderManager.h" />
     <ClInclude Include="Slider.h" />
     <ClInclude Include="RectTexture2D.h" />

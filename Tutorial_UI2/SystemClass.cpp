@@ -391,6 +391,7 @@ bool SystemClass::SearchOptions(string target, const char* str)
 
 LRESULT CALLBACK SystemClass::MessageHandler(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
+	
 	if (m_inputClass->GetTextInputFocus())
 	{
 		if (msg == WM_CHAR)

@@ -6,7 +6,6 @@
 
 #include <d3d11.h>
 #include <DirectXMath.h>
-#include <DirectXCollision.h>
 
 #include "../data/DirectXTex.h"
 #include "GraphicStructures.h"
@@ -175,7 +174,7 @@ public:
 		return S_OK;
 	}
 
-	virtual bool OnClick(DirectX::XMMATRIX& view, DirectX::XMMATRIX& projection, long& mouseX, long& mouseY)
+	virtual bool OnClick(long& mouseX, long& mouseY)
 	{
 		bool result = false;
 

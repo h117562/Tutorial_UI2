@@ -331,6 +331,11 @@ void InputClass::SetTextInputFocus(bool state)
 //텍스트 입력 포커스 확인
 bool InputClass::GetTextInputFocus()
 {
+	if (this == nullptr)//static 콜백 함수에서 동적 할당되지 않는 상태에서 호출하는 문제를 방지하기 위해 넣음
+	{
+		return false;
+	}
+
 	return m_textInputFocus;
 }
 

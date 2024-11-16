@@ -50,7 +50,7 @@ void UIManager::Frame(D3DClass* pD3DClass, HWND hwnd, ShaderManager* pShaderMana
 
 	if (m_enableDebugUI)
 	{
-		m_debugUI->Render(pTextClass, pCameraClass);
+		m_debugUI->Render(pTextClass, pCameraClass, pInputClass);
 	}
 
 	return;

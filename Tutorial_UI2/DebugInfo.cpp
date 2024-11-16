@@ -46,15 +46,20 @@ bool DebugInfo::Initialize(D3DClass* d3dClass)
 	wcscpy_s(m_stringRY, L"RY: 0");
 	wcscpy_s(m_stringRZ, L"RZ: 0");
 
+	wcscpy_s(m_stringMX, L"MouseX: 0");
+	wcscpy_s(m_stringMY, L"MouseY: 0");
+
 	return true;
 }
 
-void DebugInfo::Render(TextClass* ptextclass, CameraClass* pCameraClass)
+void DebugInfo::Render(TextClass* ptextclass, CameraClass* pCameraClass, InputClass* pInputClass)
 {
 	DirectX::XMFLOAT3 position, rotation;
+	long mX, mY;
 
 	pCameraClass->GetPosition(position);
 	pCameraClass->GetRotation(rotation);
+	pInputClass->GetMousePosition(mX, mY);
 
 	m_position = DirectX::XMINT3((int)position.x, (int)position.y, (int)position.z);
 	m_rotation = DirectX::XMINT3((int)rotation.x, (int)rotation.y, (int)rotation.z);
@@ -122,6 +127,18 @@ void DebugInfo::Render(TextClass* ptextclass, CameraClass* pCameraClass)
 		m_rotation.z = m_previousRot.z;
 	}
 
+	{
+		wcscpy_s(m_stringMX, L"MouseX: ");
+		_ltow_s(mX, m_tempString, _countof(m_tempString), 10);
+		wcscat_s(m_stringMX, m_tempString);
+	
+		wcscpy_s(m_stringMY, L"MouseY: ");
+		_ltow_s(mY, m_tempString, _countof(m_tempString), 10);
+		wcscat_s(m_stringMY, m_tempString);
+	}
+		
+	
+
 	//카메라 위치 정보를 출력
 	ptextclass->RenderText(m_stringPX, 0, 120, 800, 400);
 	ptextclass->RenderText(m_stringPY, 0, 150, 800, 400);
@@ -129,7 +146,8 @@ void DebugInfo::Render(TextClass* ptextclass, CameraClass* pCameraClass)
 	ptextclass->RenderText(m_stringRX, 0, 210, 800, 400);
 	ptextclass->RenderText(m_stringRY, 0, 240, 800, 400);
 	ptextclass->RenderText(m_stringRZ, 0, 270, 800, 400);
-
+	ptextclass->RenderText(m_stringMX, 0, 300, 800, 400);
+	ptextclass->RenderText(m_stringMY, 0, 330, 800, 400);
 
 	return;
 }

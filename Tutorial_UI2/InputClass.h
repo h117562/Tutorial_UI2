@@ -7,6 +7,7 @@
 #pragma comment(lib, "dxguid.lib")
 
 #include <dinput.h>
+#include <string>
 
 class InputClass
 {
@@ -18,6 +19,15 @@ public:
 	bool Initialize(HINSTANCE, HWND);
 	bool Frame();
 	void Shutdown();
+
+	////////////////////Test///////////////////////
+	void SetTextInputFocus(bool);
+	bool GetTextInputFocus();
+	const wchar_t* GetTextInputData();
+	void AddTextInputData(const wchar_t text);
+	void SubstractTextInputData();
+	void ClearTextInputData();
+	///////////////////////////////////////////////
 
 	bool GetKeyPressed(const unsigned char keyCode);
 	bool GetKeyPressedAndRelease(const unsigned char keyCode);
@@ -45,6 +55,9 @@ private:
 
 	bool m_prevMouseState[8];
 	float m_sensitivity;
+
+	std::wstring m_textInputData;
+	bool m_textInputFocus;
 };
 
 #endif

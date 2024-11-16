@@ -3,16 +3,10 @@
 
 #include <directxmath.h>
 
-struct VertexTextureCoord
+struct VertexUV
 {
-	DirectX::XMFLOAT3 position;
+	DirectX::XMVECTOR position;
 	DirectX::XMFLOAT2 textureCoord;
-};
-
-struct VertexColor
-{
-	DirectX::XMFLOAT3 position;
-	DirectX::XMFLOAT4 color;
 };
 
 struct MatrixBuffer

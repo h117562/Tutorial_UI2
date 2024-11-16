@@ -34,10 +34,10 @@
     <Filter Include="UI\TextClass">
       <UniqueIdentifier>{6668af76-0e6f-42c4-b627-2bd06b56cc34}</UniqueIdentifier>
     </Filter>
-    <Filter Include="UI\Components">
+    <Filter Include="UI\Elements">
       <UniqueIdentifier>{1f2d3711-a5d2-4ae7-a623-f195134aac8e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="UI\Components\AlignmentManager">
+    <Filter Include="UI\Elements\Components">
       <UniqueIdentifier>{1cabc86f-e0e9-481b-b6af-b3b5deba92b5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -132,16 +132,19 @@
       <Filter>UI</Filter>
     </ClInclude>
     <ClInclude Include="Button.h">
-      <Filter>UI\Components</Filter>
+      <Filter>UI\Elements</Filter>
     </ClInclude>
     <ClInclude Include="Slider.h">
-      <Filter>UI\Components</Filter>
+      <Filter>UI\Elements</Filter>
     </ClInclude>
     <ClInclude Include="Textfield.h">
-      <Filter>UI\Components</Filter>
+      <Filter>UI\Elements</Filter>
     </ClInclude>
-    <ClInclude Include="AlignmentManager.h">
-      <Filter>UI\Components\AlignmentManager</Filter>
+    <ClInclude Include="RectTransform.h">
+      <Filter>UI\Elements\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="RectTexture2D.h">
+      <Filter>UI\Elements\Components</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

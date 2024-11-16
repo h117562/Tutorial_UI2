@@ -147,7 +147,7 @@
     <ClCompile Include="UIManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AlignmentManager.h" />
+    <ClInclude Include="RectTransform.h" />
     <ClInclude Include="ApplicationClass.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="CameraClass.h" />
@@ -161,6 +161,7 @@
     <ClInclude Include="RectangleModel.h" />
     <ClInclude Include="ShaderManager.h" />
     <ClInclude Include="Slider.h" />
+    <ClInclude Include="RectTexture2D.h" />
     <ClInclude Include="SystemClass.h" />
     <ClInclude Include="TextClass.h" />
     <ClInclude Include="Textfield.h" />

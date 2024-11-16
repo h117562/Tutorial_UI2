@@ -391,6 +391,15 @@ bool SystemClass::SearchOptions(string target, const char* str)
 
 LRESULT CALLBACK SystemClass::MessageHandler(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
+	if (m_inputClass->GetTextInputFocus())
+	{
+		if (msg == WM_CHAR)
+		{
+			//글자가 입력될 때 마다 inputClass의 배열변수에 밀어넣기
+			m_inputClass->AddTextInputData(static_cast<wchar_t>(wparam));
+		}
+	}
+
 	return DefWindowProc(hwnd, msg, wparam, lparam);
 }
 

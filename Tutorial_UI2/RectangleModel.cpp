@@ -21,7 +21,7 @@ bool RectangleModel::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pDev
 {
 	HRESULT result;
 
-	m_vertices = new VertexTextureCoord[6];
+	m_vertices = new VertexUV[6];
 	m_indices = new UINT[6];
 
 	m_vertices[0].position = DirectX::XMFLOAT3(-1.0f, -1.0f, 0.0f);
@@ -55,7 +55,7 @@ bool RectangleModel::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pDev
 	//정점 버퍼에 대한 설명을 입력한다.
 	D3D11_BUFFER_DESC vertexBufferDesc;
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vertexBufferDesc.ByteWidth = sizeof(VertexTextureCoord) * m_indexCount;
+	vertexBufferDesc.ByteWidth = sizeof(VertexUV) * m_indexCount;
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vertexBufferDesc.CPUAccessFlags = 0;
 	vertexBufferDesc.MiscFlags = 0;
@@ -132,8 +132,6 @@ bool RectangleModel::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pDev
 void RectangleModel::Render(ID3D11DeviceContext* pDeviceContext)
 {
 	pDeviceContext->PSSetShaderResources(0, 1, &m_resourceView);
-
-	//인풋 어셈블러에서 버퍼를 활성화하여 렌더링 할 수 있도록 설정
 	pDeviceContext->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
 	pDeviceContext->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 	pDeviceContext->DrawIndexed(m_indexCount, 0, 0);

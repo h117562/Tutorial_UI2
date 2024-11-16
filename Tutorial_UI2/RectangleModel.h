@@ -22,7 +22,7 @@ public:
 	void Render(ID3D11DeviceContext*);
 
 private:
-	VertexTextureCoord* m_vertices;
+	VertexUV* m_vertices;
 	UINT* m_indices;
 	UINT m_indexCount;
 
@@ -32,7 +32,7 @@ private:
 	ID3D11Buffer* m_vertexBuffer;
 	ID3D11Buffer* m_indexBuffer;
 
-	UINT stride = sizeof(VertexTextureCoord);
+	UINT stride = sizeof(VertexUV);
 	UINT offset = 0;
 
 };

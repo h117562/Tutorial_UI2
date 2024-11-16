@@ -22,12 +22,12 @@ public:
 
 	RectTransform()
 	{
+		//기본 설정 데이터
 		m_position = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
 		m_rotation = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
 		m_scale = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
 		m_margin = DirectX::XMFLOAT2(0.0f, 0.0f);
 		m_align = ALIGNMENT_CENTER;
-
 	}
 
 	~RectTransform()
@@ -64,26 +64,31 @@ public:
 		m_align = flag;
 	}
 
+	//위치 얻기
 	virtual DirectX::XMFLOAT3 GetPosition()
 	{
 		return m_position;
 	}
 
+	//회전 얻기
 	virtual DirectX::XMFLOAT3 GetRotation()
 	{
 		return m_position;
 	}
 
+	//크기 얻기
 	virtual DirectX::XMFLOAT3 GetScale()
 	{
 		return m_scale;
 	}
 
+	//여백 얻기
 	virtual DirectX::XMFLOAT2 GetMargin()
 	{
 		return m_margin;
 	}
 
+	//정렬 얻기
 	virtual unsigned int GetAlign()
 	{
 		return m_align;

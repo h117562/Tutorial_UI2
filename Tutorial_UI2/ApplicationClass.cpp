@@ -136,8 +136,23 @@ bool ApplicationClass::Frame(HWND hwnd, InputClass* pInputClass, FrameTimer* pFr
 	//사용자 입력 처리
 	HandleInput(pInputClass, pFrameTimer);
 
+	//카메라 업데이트
+	m_CameraClass->Render();
+
+	//3D RenderTarget 초기화(특정 컬러로)
+	m_Direct3D->BeginScene(0.0f, 0.0f, 0.2f, 1.0f);
+
+	//2D RenderTarget 초기화
+	m_TextClass->BeginDraw();
+
 	//그래픽 렌더링
 	Render(hwnd, pInputClass);
+
+	//UI 렌더링
+	m_uiManager->Frame(m_Direct3D, hwnd, m_ShaderManager, m_TextClass, m_CameraClass, pInputClass);
+
+	m_TextClass->EndDraw();
+	m_Direct3D->EndScene();
 
 	return true;
 }
@@ -171,20 +186,5 @@ void ApplicationClass::HandleInput(InputClass* pInputClass, FrameTimer* pFrameTi
 
 void ApplicationClass::Render(HWND hwnd, InputClass* pInputClass)
 {
-	//3D RenderTarget 초기화(특정 컬러로)
-	m_Direct3D->BeginScene(0.0f, 0.0f, 0.2f, 1.0f);
-
-	//2D RenderTarget 초기화
-	m_TextClass->BeginDraw();
-
-	//뷰 매트릭스 업데이트
-	m_CameraClass->Render();
-
-	//UI 렌더링
-	m_uiManager->Frame(m_Direct3D, hwnd, m_ShaderManager, m_TextClass, m_CameraClass, pInputClass);
-
-	m_TextClass->EndDraw();
-	m_Direct3D->EndScene();
-
 	return;
 }

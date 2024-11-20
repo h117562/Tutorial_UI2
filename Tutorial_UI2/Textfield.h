@@ -11,7 +11,6 @@ public:
 	~Textfield();
 
 	bool Initialize();
-	void Render();
 	void Shutdown();
 
 private:

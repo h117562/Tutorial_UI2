@@ -133,7 +133,6 @@
   <ItemGroup>
     <ClCompile Include="ApplicationClass.cpp" />
     <ClCompile Include="CameraClass.cpp" />
-    <ClCompile Include="ColorShaderClass.cpp" />
     <ClCompile Include="D3DClass.cpp" />
     <ClCompile Include="DebugInfo.cpp" />
     <ClCompile Include="FrameTimer.cpp" />
@@ -141,8 +140,9 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ShaderManager.cpp" />
     <ClCompile Include="SystemClass.cpp" />
+    <ClCompile Include="TestCanvas.cpp" />
     <ClCompile Include="TextClass.cpp" />
-    <ClCompile Include="TextureShaderClass.cpp" />
+    <ClCompile Include="UIShaderClass.cpp" />
     <ClCompile Include="UIManager.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -150,7 +150,6 @@
     <ClInclude Include="ApplicationClass.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="CameraClass.h" />
-    <ClInclude Include="ColorShaderClass.h" />
     <ClInclude Include="D3DClass.h" />
     <ClInclude Include="DebugInfo.h" />
     <ClInclude Include="FrameTimer.h" />
@@ -161,9 +160,10 @@
     <ClInclude Include="Slider.h" />
     <ClInclude Include="RectTexture2D.h" />
     <ClInclude Include="SystemClass.h" />
+    <ClInclude Include="TestCanvas.h" />
     <ClInclude Include="TextClass.h" />
     <ClInclude Include="Textfield.h" />
-    <ClInclude Include="TextureShaderClass.h" />
+    <ClInclude Include="UIShaderClass.h" />
     <ClInclude Include="UIManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

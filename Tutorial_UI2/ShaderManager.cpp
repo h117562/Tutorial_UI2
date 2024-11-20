@@ -2,8 +2,7 @@
 
 ShaderManager::ShaderManager()
 {
-	m_ColorShader = 0;
-	m_TextureShader = 0;
+	m_uiShader = 0;
 }
 
 
@@ -19,27 +18,13 @@ bool ShaderManager::Initialize(ID3D11Device* pDevice, HWND hwnd)
 {
 	bool result;
 
-
-	m_ColorShader = new ColorShaderClass;
-	if (!m_ColorShader)
+	m_uiShader = new UIShaderClass;
+	if (!m_uiShader)
 	{
 		return false;
 	}
 
-	result = m_ColorShader->Initialize(pDevice, hwnd);
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not initialize the ColorShader.", L"Error", MB_OK);
-		return false;
-	}
-
-	m_TextureShader = new TextureShaderClass;
-	if (!m_TextureShader)
-	{
-		return false;
-	}
-
-	result = m_TextureShader->Initialize(pDevice, hwnd);
+	result = m_uiShader->Initialize(pDevice, hwnd);
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the TextureShader.", L"Error", MB_OK);
@@ -52,29 +37,17 @@ bool ShaderManager::Initialize(ID3D11Device* pDevice, HWND hwnd)
 void ShaderManager::Shutdown()
 {
 
-	if (m_TextureShader)
+	if (m_uiShader)
 	{
-		m_TextureShader->Shutdown();
-		delete m_TextureShader;
-		m_TextureShader = 0;
-	}
-
-	if (m_ColorShader)
-	{
-		m_ColorShader->Shutdown();
-		delete m_ColorShader;
-		m_ColorShader = 0;
+		m_uiShader->Shutdown();
+		delete m_uiShader;
+		m_uiShader = 0;
 	}
 
 	return;
 }
 
-TextureShaderClass* ShaderManager::GetTextureShader()
+UIShaderClass* ShaderManager::GetUIShader()
 {
-	return m_TextureShader;
-}
-
-ColorShaderClass* ShaderManager::GetColorShader()
-{
-	return m_ColorShader;
+	return m_uiShader;
 }

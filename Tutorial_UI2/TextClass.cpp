@@ -114,7 +114,7 @@ bool TextClass::Initialize(IDXGISwapChain* pSwapChain)
 }
 
 //텍스트 렌더링 기본 폰트, 컬러
-void TextClass::RenderText(CONST WCHAR* ptext, FLOAT x, FLOAT y, FLOAT width, FLOAT height)
+void TextClass::RenderText(const wchar_t* ptext, float x, float y, float width, float height)
 {
 	m_renderTarget->DrawTextW(
 		ptext,
@@ -128,7 +128,7 @@ void TextClass::RenderText(CONST WCHAR* ptext, FLOAT x, FLOAT y, FLOAT width, FL
 }
 
 //텍스트 렌더링 지정 폰트, 컬러
-void TextClass::RenderText(CONST WCHAR* ptext, FLOAT x, FLOAT y, FLOAT width, FLOAT height, IDWriteTextFormat* pformat, ID2D1SolidColorBrush* pbrush)
+void TextClass::RenderText(const wchar_t* ptext, float x, float y, float width, float height, IDWriteTextFormat* pformat, ID2D1SolidColorBrush* pbrush)
 {
 	m_renderTarget->DrawTextW(
 		ptext,

@@ -6,6 +6,7 @@
 
 #include <d3d11.h>
 #include <DirectXMath.h>
+#include <DirectXCollision.h>
 
 #include "../data/DirectXTex.h"
 #include "GraphicStructures.h"
@@ -15,10 +16,12 @@ class RectTexture2D
 public:
 	RectTexture2D()
 	{
-		 m_vertexBuffer = 0;
-		 m_indexBuffer = 0;
-		 m_resource = 0;
-		 m_resourceView = 0;
+		 m_vertexBuffer = nullptr;
+		 m_indexBuffer = nullptr;
+		 m_resource1 = nullptr;
+		 m_resource2 = nullptr;
+		 m_resourceView1 = nullptr;
+		 m_resourceView2 = nullptr;
 		 m_indexCount = 6;
 		 m_stride = sizeof(VertexUV);
 		 m_offset = 0;
@@ -56,16 +59,28 @@ public:
 			m_vertexBuffer = nullptr;
 		}
 
-		if (m_resource)
+		if (m_resource1)
 		{
-			m_resource->Release();
-			m_resource = nullptr;
+			m_resource1->Release();
+			m_resource1 = nullptr;
 		}
 
-		if (m_resourceView)
+		if (m_resourceView1)
 		{
-			m_resourceView->Release();
-			m_resourceView = nullptr;
+			m_resourceView1->Release();
+			m_resourceView1 = nullptr;
+		}
+
+		if (m_resource2)
+		{
+			m_resource2->Release();
+			m_resource2 = nullptr;
+		}
+
+		if (m_resourceView2)
+		{
+			m_resourceView2->Release();
+			m_resourceView2 = nullptr;
 		}
 
 		if (m_vertices)
@@ -124,7 +139,99 @@ public:
 		return S_OK;
 	}
 
-	virtual HRESULT SetTexture(ID3D11Device* pDevice, const wchar_t* filePath)
+	virtual HRESULT SetTexture1(ID3D11Device* pDevice, const wchar_t* filePath)
+	{
+		HRESULT result;
+
+		result = IntializeResource(pDevice, filePath, m_resource1, m_resourceView1);
+
+		return result;
+	}
+
+	virtual HRESULT SetTexture2(ID3D11Device* pDevice, const wchar_t* filePath)
+	{
+		HRESULT result;
+
+		result = IntializeResource(pDevice, filePath, m_resource2, m_resourceView2);
+
+		return result;
+	}
+
+	virtual bool Draw1(ID3D11DeviceContext* pDeviceContext)
+	{
+		if (m_vertexBuffer == nullptr)
+		{
+			return false;
+		}
+
+		pDeviceContext->IASetVertexBuffers(0, 1, &m_vertexBuffer, &m_stride, &m_offset);//버퍼를 인풋 어셈블러에 바인딩
+		pDeviceContext->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);//버퍼를 인풋 어셈블러에 바인딩
+		pDeviceContext->PSSetShaderResources(0, 1, &m_resourceView1);//쉐이더 리소스 뷰를 픽셀 쉐이더에 연계
+		pDeviceContext->DrawIndexed(m_indexCount, 0, 0);//그리기
+	}
+
+	virtual bool Draw2(ID3D11DeviceContext* pDeviceContext)
+	{
+		if (m_vertexBuffer == nullptr)
+		{
+			return false;
+		}
+
+		if (m_resourceView2 == nullptr)
+		{
+			Draw1(pDeviceContext);
+
+			return true;
+		}
+
+		pDeviceContext->IASetVertexBuffers(0, 1, &m_vertexBuffer, &m_stride, &m_offset);//버퍼를 인풋 어셈블러에 바인딩
+		pDeviceContext->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);//버퍼를 인풋 어셈블러에 바인딩
+		pDeviceContext->PSSetShaderResources(0, 1, &m_resourceView2);//쉐이더 리소스 뷰를 픽셀 쉐이더에 연계
+		pDeviceContext->DrawIndexed(m_indexCount, 0, 0);//그리기
+	}
+
+	virtual void SetScale(DirectX::XMFLOAT3 size)
+	{
+		m_vertices[0] = DirectX::XMVectorSet(-0.5f * size.x, 0.5f * size.y, 0.0f, 1.0f);//좌상단
+		m_vertices[1] = DirectX::XMVectorSet(0.5f * size.x, 0.5f * size.y, 0.0f, 1.0f);//우상단
+		m_vertices[2] = DirectX::XMVectorSet(-0.5f * size.x, -0.5f * size.y, 0.0f, 1.0f);//좌하단
+		m_vertices[3] = DirectX::XMVectorSet(0.5f * size.x, -0.5f * size.y, 0.0f, 1.0f);//우하단
+	}
+
+protected://상속 받은 클래스에서만 사용가능하게
+	virtual bool RayCast(
+		const DirectX::XMMATRIX view,
+		const DirectX::XMMATRIX projection,
+		const float mouseX,
+		const float mouseY) final
+	{
+		bool result = false;
+		float dist = 0.0f;//충돌 거리
+		DirectX::XMVECTOR origin = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+		DirectX::XMVECTOR direction = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+
+		//레이 생성
+		GetRay(view, projection, mouseX, mouseY, origin, direction);
+
+		//폴리곤과 충돌체크
+		result = DirectX::TriangleTests::Intersects(origin, direction, m_vertices[m_indices[0]], m_vertices[m_indices[1]], m_vertices[m_indices[2]], dist);
+		if (result)
+		{
+			return true;
+		}
+
+		//폴리곤과 충돌체크
+		result = DirectX::TriangleTests::Intersects(origin, direction, m_vertices[m_indices[3]], m_vertices[m_indices[4]], m_vertices[m_indices[5]], dist);
+		if (result)
+		{
+			return true;
+		}
+
+		return false;
+	}
+
+private:
+	virtual HRESULT IntializeResource(ID3D11Device* pDevice, const wchar_t* filePath, ID3D11Resource* rc, ID3D11ShaderResourceView* srv)
 	{
 		HRESULT result;
 
@@ -147,7 +254,7 @@ public:
 			0,
 			0,
 			DirectX::CREATETEX_DEFAULT,
-			&m_resource);
+			&rc);
 
 		if (FAILED(result))
 		{
@@ -163,10 +270,10 @@ public:
 		shaderResourceViewDesc.Texture2D.MipLevels = 1;
 
 		//쉐이더 리소스 뷰 생성
-		result = pDevice->CreateShaderResourceView(m_resource, &shaderResourceViewDesc, &m_resourceView);
+		result = pDevice->CreateShaderResourceView(rc, &shaderResourceViewDesc, &srv);
 		if (FAILED(result))
 		{
-			m_resourceView = nullptr;
+			srv = nullptr;
 
 			return result;
 		}
@@ -174,34 +281,35 @@ public:
 		return S_OK;
 	}
 
-	virtual bool OnClick(long& mouseX, long& mouseY)
+	virtual void GetRay(
+		const DirectX::XMMATRIX v,
+		const DirectX::XMMATRIX p,
+		const float mouseX,
+		const float mouseY, 
+		DirectX::XMVECTOR& origin, 
+		DirectX::XMVECTOR& direction)
 	{
-		bool result = false;
+		DirectX::XMMATRIX inverseViewProjection;
 
-		return result;
-	}
+		inverseViewProjection = DirectX::XMMatrixMultiply(v, p);//뷰, 투영 행렬 곱
+		inverseViewProjection = DirectX::XMMatrixInverse(nullptr, inverseViewProjection);//역행렬
 
-	virtual void SetScale(DirectX::XMFLOAT3 size)
-	{
-		m_vertices[0] = DirectX::XMVectorSet(-0.5f * size.x , 0.5f * size.y, 0.0f, 1.0f);//좌상단
-		m_vertices[1] = DirectX::XMVectorSet(0.5f * size.x, 0.5f * size.y, 0.0f, 1.0f);//우상단
-		m_vertices[2] = DirectX::XMVectorSet(-0.5f * size.x, -0.5f * size.y, 0.0f, 1.0f);//좌하단
-		m_vertices[3] = DirectX::XMVectorSet(0.5f * size.x, -0.5f * size.y, 0.0f, 1.0f);//우하단
-	}
+		origin = DirectX::XMVectorSet(mouseX, mouseY, 0.0f, 1.0f);//레이 시작
+		origin = DirectX::XMVector3Transform(origin, inverseViewProjection);//벡터 변환
 
-	virtual void Render(ID3D11DeviceContext* pDeviceContext)
-	{
-		pDeviceContext->IASetVertexBuffers(0, 1, &m_vertexBuffer, &m_stride, &m_offset);//버퍼를 인풋 어셈블러에 바인딩
-		pDeviceContext->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);//버퍼를 인풋 어셈블러에 바인딩
-		pDeviceContext->PSSetShaderResources(0, 1, &m_resourceView);//쉐이더 리소스 뷰를 픽셀 쉐이더에 연계
-		pDeviceContext->DrawIndexed(m_indexCount, 0, 0);//그리기
+		direction = DirectX::XMVectorSet(mouseX, mouseY, 1.0f, 1.0f);//레이 끝
+		direction = DirectX::XMVector3Transform(direction, inverseViewProjection);//뷰.투영 역행렬로 벡터 변환
+		direction = DirectX::XMVectorSubtract(direction, origin);//레이 끝에서 시작을 빼서 방향을 구함
+		direction = DirectX::XMVector3Normalize(direction);//레이 방향을 정규화
 	}
 
 private:
 	ID3D11Buffer* m_vertexBuffer;//정점 버퍼
 	ID3D11Buffer* m_indexBuffer;//인덱스 버퍼
-	ID3D11Resource* m_resource;//텍스쳐 리소스
-	ID3D11ShaderResourceView* m_resourceView;//쉐이더 리소스 뷰
+	ID3D11Resource* m_resource1;//텍스쳐 리소스
+	ID3D11Resource* m_resource2;//텍스쳐 리소스
+	ID3D11ShaderResourceView* m_resourceView1;//쉐이더 리소스 뷰
+	ID3D11ShaderResourceView* m_resourceView2;//쉐이더 리소스 뷰
 
 	DirectX::XMVECTOR* m_vertices;//정점 배열
 	UINT* m_indices;//인덱스 배열

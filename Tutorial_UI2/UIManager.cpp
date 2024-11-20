@@ -32,14 +32,21 @@ bool UIManager::Initialize(D3DClass* pD3Dclass)
 		return false;
 	}
 
+	result = m_canvas.Initialize(pD3Dclass->GetDevice());
+	if (!result)
+	{
+		return false;
+	}
+
+	m_canvas.SetActive(true);
 
 	return true;
 }
 
 
-void UIManager::Frame(D3DClass* pD3DClass, HWND hwnd, ShaderManager* pShaderManager, TextClass* pTextClass, CameraClass* pCameraClass, InputClass* pInputClass)
+bool UIManager::Frame(D3DClass* pD3DClass, HWND hwnd, ShaderManager* pShaderManager, TextClass* pTextClass, CameraClass* pCameraClass, InputClass* pInputClass)
 {
-	bool state;
+	bool result, state;
 
 	//F5 버튼을 눌러 UI를 온오프
 	state = pInputClass->GetKeyReleasedAndPress(DIK_F5);
@@ -53,12 +60,23 @@ void UIManager::Frame(D3DClass* pD3DClass, HWND hwnd, ShaderManager* pShaderMana
 		m_debugUI->Render(pTextClass, pCameraClass, pInputClass);
 	}
 
-	return;
+	pD3DClass->TurnZBufferOff();
+
+	result = m_canvas.Frame(pD3DClass, hwnd, pShaderManager, pTextClass, pCameraClass, pInputClass);
+	if (!result)
+	{
+		return false;
+	}
+
+	pD3DClass->ResetDepthStencilState();
+
+	return true;
 }
 
 
 void UIManager::Shutdown()
 {
+
 	if (m_debugUI)
 	{
 		m_debugUI->Shutdown();

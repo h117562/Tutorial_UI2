@@ -48,10 +48,7 @@
     <ClCompile Include="D3DClass.cpp">
       <Filter>DirectX</Filter>
     </ClCompile>
-    <ClCompile Include="ColorShaderClass.cpp">
-      <Filter>Shader\ShaderClass</Filter>
-    </ClCompile>
-    <ClCompile Include="TextureShaderClass.cpp">
+    <ClCompile Include="UIShaderClass.cpp">
       <Filter>Shader\ShaderClass</Filter>
     </ClCompile>
     <ClCompile Include="DebugInfo.cpp">
@@ -81,6 +78,9 @@
     <ClCompile Include="UIManager.cpp">
       <Filter>UI</Filter>
     </ClCompile>
+    <ClCompile Include="TestCanvas.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FrameTimer.h">
@@ -107,10 +107,7 @@
     <ClInclude Include="D3DClass.h">
       <Filter>DirectX</Filter>
     </ClInclude>
-    <ClInclude Include="ColorShaderClass.h">
-      <Filter>Shader\ShaderClass</Filter>
-    </ClInclude>
-    <ClInclude Include="TextureShaderClass.h">
+    <ClInclude Include="UIShaderClass.h">
       <Filter>Shader\ShaderClass</Filter>
     </ClInclude>
     <ClInclude Include="DebugInfo.h">
@@ -139,6 +136,9 @@
     </ClInclude>
     <ClInclude Include="RectTexture2D.h">
       <Filter>UI\Elements\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="TestCanvas.h">
+      <Filter>UI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

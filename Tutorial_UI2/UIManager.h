@@ -5,6 +5,8 @@
 #include "ShaderManager.h"
 #include "InputClass.h"
 
+#include "TestCanvas.h"
+
 class UIManager
 {
 public:
@@ -13,11 +15,12 @@ public:
 	UIManager(const UIManager&);
 
 	bool Initialize(D3DClass*);
-	void Frame(D3DClass*, HWND hwnd, ShaderManager*, TextClass*, CameraClass*, InputClass*);
+	bool Frame(D3DClass*, HWND hwnd, ShaderManager*, TextClass*, CameraClass*, InputClass*);
 	void Shutdown();
 
 private:
 	DebugInfo* m_debugUI;
+	TestCanvas m_canvas;
 
 	bool m_enableDebugUI;
 };

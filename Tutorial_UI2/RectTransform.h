@@ -25,7 +25,6 @@ public:
 		//기본 설정 데이터
 		m_position = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
 		m_rotation = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
-		m_scale = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
 		m_margin = DirectX::XMFLOAT2(0.0f, 0.0f);
 		m_align = ALIGNMENT_CENTER;
 	}
@@ -42,12 +41,6 @@ public:
 
 	//회전 설정
 	virtual void SetRotation(float x, float y, float z)
-	{
-		m_rotation = DirectX::XMFLOAT3(x, y, z);
-	}
-
-	//크기 설정
-	virtual void SetScale(float x, float y, float z)
 	{
 		m_rotation = DirectX::XMFLOAT3(x, y, z);
 	}
@@ -76,12 +69,6 @@ public:
 		return m_position;
 	}
 
-	//크기 얻기
-	virtual DirectX::XMFLOAT3 GetScale()
-	{
-		return m_scale;
-	}
-
 	//여백 얻기
 	virtual DirectX::XMFLOAT2 GetMargin()
 	{
@@ -97,7 +84,6 @@ public:
 private:
 	DirectX::XMFLOAT3 m_position;
 	DirectX::XMFLOAT3 m_rotation;
-	DirectX::XMFLOAT3 m_scale;
 	DirectX::XMFLOAT2 m_margin;
 	unsigned int m_align;
 

@@ -41,9 +41,7 @@ public:
 
 	void GetVideoCardInfo(char* description, int& memory);
 
-	void ResetRenderTarget();
-
-	void ResetDepthStencilState();
+	void TurnZBufferOn();
 	void TurnZBufferOff();
 
 	void EnableAlphaBlending();

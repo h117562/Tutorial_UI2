@@ -18,8 +18,7 @@ enum ALIGNMENT//정렬 플래그
 
 class RectTransform//요소의 위치 수정 및 정렬 기능을 제공하는 추상 클래스
 {
-public:
-
+protected:
 	RectTransform()
 	{
 		//기본 설정 데이터
@@ -33,6 +32,7 @@ public:
 	{
 	}
 
+public:
 	//위치 설정
 	virtual void SetPosition(float x, float y, float z)
 	{

@@ -137,8 +137,6 @@ void DebugInfo::Render(TextClass* ptextclass, CameraClass* pCameraClass, InputCl
 		wcscat_s(m_stringMY, m_tempString);
 	}
 		
-	
-
 	//카메라 위치 정보를 출력
 	ptextclass->RenderText(m_stringPX, 0, 120, 800, 400);
 	ptextclass->RenderText(m_stringPY, 0, 150, 800, 400);

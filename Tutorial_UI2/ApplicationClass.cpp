@@ -148,9 +148,6 @@ bool ApplicationClass::Frame(HWND hwnd, InputClass* pInputClass, FrameTimer* pFr
 	//±×·¡ÇÈ ·»´õ¸µ
 	Render(hwnd, pInputClass);
 
-	//UI ·»´õ¸µ
-	m_uiManager->Frame(m_Direct3D, hwnd, m_ShaderManager, m_TextClass, m_CameraClass, pInputClass);
-
 	m_TextClass->EndDraw();
 	m_Direct3D->EndScene();
 
@@ -186,5 +183,14 @@ void ApplicationClass::HandleInput(InputClass* pInputClass, FrameTimer* pFrameTi
 
 void ApplicationClass::Render(HWND hwnd, InputClass* pInputClass)
 {
+	m_Direct3D->TurnZBufferOff();
+	//m_Direct3D->EnableAlphaBlending();
+
+	//UI ·»´õ¸µ
+	m_uiManager->Frame(m_Direct3D, hwnd, m_ShaderManager, m_TextClass, m_CameraClass, pInputClass);
+
+	//m_Direct3D->DisableAlphaBlending();
+	m_Direct3D->TurnZBufferOn();
+
 	return;
 }

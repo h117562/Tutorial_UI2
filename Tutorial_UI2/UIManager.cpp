@@ -60,15 +60,11 @@ bool UIManager::Frame(D3DClass* pD3DClass, HWND hwnd, ShaderManager* pShaderMana
 		m_debugUI->Render(pTextClass, pCameraClass, pInputClass);
 	}
 
-	pD3DClass->TurnZBufferOff();
-
 	result = m_canvas.Frame(pD3DClass, hwnd, pShaderManager, pTextClass, pCameraClass, pInputClass);
 	if (!result)
 	{
 		return false;
 	}
-
-	pD3DClass->ResetDepthStencilState();
 
 	return true;
 }

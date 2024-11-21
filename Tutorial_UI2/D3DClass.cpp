@@ -384,64 +384,6 @@ bool D3DClass::Initialize(HWND hwnd)
 		return false;
 	}
 
-	{//거울용
-		D3D11_DEPTH_STENCIL_DESC maskDesc;
-		ZeroMemory(&maskDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
-
-		maskDesc.DepthEnable = true;
-		maskDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
-		maskDesc.DepthFunc = D3D11_COMPARISON_LESS;
-
-		maskDesc.StencilEnable = true;
-		maskDesc.StencilReadMask = 0xFF;
-		maskDesc.StencilWriteMask = 0xFF;
-
-		maskDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-		maskDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
-		maskDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_REPLACE;
-		maskDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-
-		maskDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-		maskDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
-		maskDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_REPLACE;
-		maskDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-
-		result = m_device->CreateDepthStencilState(&maskDesc, &m_maskState);
-		if (FAILED(result))
-		{
-			return false;
-		}
-
-
-		D3D11_DEPTH_STENCIL_DESC mirrorDesc;
-		ZeroMemory(&mirrorDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
-
-		mirrorDesc.DepthEnable = true;
-		mirrorDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-		mirrorDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
-
-		mirrorDesc.StencilEnable = true;
-		mirrorDesc.StencilReadMask = 0xFF;
-		mirrorDesc.StencilWriteMask = 0xFF;
-
-		mirrorDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-		mirrorDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
-		mirrorDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-		mirrorDesc.FrontFace.StencilFunc = D3D11_COMPARISON_EQUAL;
-
-		mirrorDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-		mirrorDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
-		mirrorDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-		mirrorDesc.BackFace.StencilFunc = D3D11_COMPARISON_EQUAL;
-
-		result = m_device->CreateDepthStencilState(&mirrorDesc, &m_mirrorState);
-		if (FAILED(result))
-		{
-			return false;
-		}
-	}
-
-
 	//메모리 초기화
 	ZeroMemory(&depthStencilViewDesc, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
 
@@ -532,12 +474,12 @@ bool D3DClass::Initialize(HWND hwnd)
 	ZeroMemory(&blendStateDesc, sizeof(D3D11_BLEND_DESC));
 
 	//블랜드 상태 설정(알파 블랜딩)
-	blendStateDesc.AlphaToCoverageEnable = false;
+	blendStateDesc.AlphaToCoverageEnable = true;
 	blendStateDesc.IndependentBlendEnable = false;
 	blendStateDesc.RenderTarget[0].BlendEnable = true;
 	blendStateDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
 	blendStateDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-	blendStateDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;				//SourceBlend 현재 픽셀에 대한 블랜드
+	blendStateDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;				//SourceBlend 현재 픽셀에 대한 블랜드
 	blendStateDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;		//DestinationBlend 이전에 그려진 픽셀들에 대한 블랜드
 	blendStateDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
 	blendStateDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
@@ -644,15 +586,7 @@ void D3DClass::GetVideoCardInfo(char* description, int& memory)
 	return;
 }
 
-void D3DClass::ResetRenderTarget()
-{
-	m_deviceContext->OMSetRenderTargets(1, &m_renderTargetView, m_depthStencilView);
-	m_deviceContext->RSSetViewports(1, &m_viewport);
-
-	return;
-}
-
-void D3DClass::ResetDepthStencilState()
+void D3DClass::TurnZBufferOn()
 {
 	m_deviceContext->OMSetDepthStencilState(m_depthStencilState, 1);
 	return;

@@ -14,6 +14,76 @@
 class RectTexture2D
 {
 public:
+	virtual HRESULT InitializeBuffer(ID3D11Device* pDevice)
+	{
+		HRESULT result;
+
+		//정점 버퍼 설정
+		D3D11_BUFFER_DESC vertexBufferDesc;
+		vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+		vertexBufferDesc.ByteWidth = sizeof(VertexUV) * m_indexCount;
+		vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		vertexBufferDesc.CPUAccessFlags = 0;
+		vertexBufferDesc.MiscFlags = 0;
+
+		D3D11_SUBRESOURCE_DATA initData;
+		initData.pSysMem = m_vertices;
+
+		//정점 버퍼 생성
+		result = pDevice->CreateBuffer(&vertexBufferDesc, &initData, &m_vertexBuffer);
+		if (FAILED(result))
+		{
+			return result;
+		}
+
+		//인덱스 버퍼 설정
+		D3D11_BUFFER_DESC indexBufferDesc;
+		indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+		indexBufferDesc.ByteWidth = sizeof(UINT) * m_indexCount;
+		indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+		indexBufferDesc.CPUAccessFlags = 0;
+		indexBufferDesc.MiscFlags = 0;
+		indexBufferDesc.StructureByteStride = 0;
+		initData.pSysMem = &m_indices[0];
+
+
+		//인덱스 버퍼 생성
+		result = pDevice->CreateBuffer(&indexBufferDesc, &initData, &m_indexBuffer);
+		if (FAILED(result))
+		{
+			return result;
+		}
+
+		return S_OK;
+	}
+
+	virtual HRESULT SetTexture1(ID3D11Device* pDevice, const wchar_t* filePath)
+	{
+		HRESULT result;
+
+		result = IntializeResource(pDevice, filePath, true);
+
+		return result;
+	}
+
+	virtual HRESULT SetTexture2(ID3D11Device* pDevice, const wchar_t* filePath)
+	{
+		HRESULT result;
+
+		result = IntializeResource(pDevice, filePath, false);
+
+		return result;
+	}
+
+	virtual void SetScale(DirectX::XMFLOAT3 size)
+	{
+		m_vertices[0].position = DirectX::XMVectorSet(-0.5f * size.x, 0.5f * size.y, 0.0f, 1.0f);//좌상단
+		m_vertices[1].position = DirectX::XMVectorSet(0.5f * size.x, 0.5f * size.y, 0.0f, 1.0f);//우상단
+		m_vertices[2].position = DirectX::XMVectorSet(-0.5f * size.x, -0.5f * size.y, 0.0f, 1.0f);//좌하단
+		m_vertices[3].position = DirectX::XMVectorSet(0.5f * size.x, -0.5f * size.y, 0.0f, 1.0f);//우하단
+	}
+
+protected://상속 받은 클래스에서만 사용가능하게
 	RectTexture2D()
 	{
 		 m_vertexBuffer = nullptr;
@@ -27,12 +97,17 @@ public:
 		 m_offset = 0;
 
 		//변환없이 바로 레이캐스트에 사용하기 위해서 XMVECTOR로 선언
-		m_vertices = new DirectX::XMVECTOR[4];
+		m_vertices = new VertexUV[4];
 
-		m_vertices[0] = DirectX::XMVectorSet(-0.5f, 0.5f, 0.0f, 1.0f);//좌상단
-		m_vertices[1] = DirectX::XMVectorSet(0.5f, 0.5f, 0.0f, 1.0f);//우상단
-		m_vertices[2] = DirectX::XMVectorSet(-0.5f, -0.5f, 0.0f, 1.0f);//좌하단
-		m_vertices[3] = DirectX::XMVectorSet(0.5f, -0.5f, 0.0f, 1.0f);//우하단
+		m_vertices[0].position = DirectX::XMVectorSet(-0.5f, 0.5f, 0.0f, 1.0f);//좌상단
+		m_vertices[1].position = DirectX::XMVectorSet(0.5f, 0.5f, 0.0f, 1.0f);//우상단
+		m_vertices[2].position = DirectX::XMVectorSet(-0.5f, -0.5f, 0.0f, 1.0f);//좌하단
+		m_vertices[3].position = DirectX::XMVectorSet(0.5f, -0.5f, 0.0f, 1.0f);//우하단
+
+		m_vertices[0].textureCoord = DirectX::XMFLOAT2(0.0f, 0.0f);//좌상단
+		m_vertices[1].textureCoord = DirectX::XMFLOAT2(1.0f, 0.0f);//우상단
+		m_vertices[2].textureCoord = DirectX::XMFLOAT2(0.0f, 1.0f);//좌하단
+		m_vertices[3].textureCoord = DirectX::XMFLOAT2(1.0f, 1.0f);//우하단
 
 		m_indices = new UINT[m_indexCount];
 
@@ -96,67 +171,6 @@ public:
 		}
 	}
 
-	virtual HRESULT InitializeBuffer(ID3D11Device* pDevice)
-	{
-		HRESULT result;
-
-		//정점 버퍼 설정
-		D3D11_BUFFER_DESC vertexBufferDesc;
-		vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-		vertexBufferDesc.ByteWidth = sizeof(VertexUV) * m_indexCount;
-		vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-		vertexBufferDesc.CPUAccessFlags = 0;
-		vertexBufferDesc.MiscFlags = 0;
-
-		D3D11_SUBRESOURCE_DATA initData;
-		initData.pSysMem = m_vertices;
-
-		//정점 버퍼 생성
-		result = pDevice->CreateBuffer(&vertexBufferDesc, &initData, &m_vertexBuffer);
-		if (FAILED(result))
-		{
-			return result;
-		}
-
-		//인덱스 버퍼 설정
-		D3D11_BUFFER_DESC indexBufferDesc;
-		indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-		indexBufferDesc.ByteWidth = sizeof(UINT) * m_indexCount;
-		indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-		indexBufferDesc.CPUAccessFlags = 0;
-		indexBufferDesc.MiscFlags = 0;
-		indexBufferDesc.StructureByteStride = 0;
-		initData.pSysMem = &m_indices[0];
-
-
-		//인덱스 버퍼 생성
-		result = pDevice->CreateBuffer(&indexBufferDesc, &initData, &m_indexBuffer);
-		if (FAILED(result))
-		{
-			return result;
-		}
-
-		return S_OK;
-	}
-
-	virtual HRESULT SetTexture1(ID3D11Device* pDevice, const wchar_t* filePath)
-	{
-		HRESULT result;
-
-		result = IntializeResource(pDevice, filePath, m_resource1, m_resourceView1);
-
-		return result;
-	}
-
-	virtual HRESULT SetTexture2(ID3D11Device* pDevice, const wchar_t* filePath)
-	{
-		HRESULT result;
-
-		result = IntializeResource(pDevice, filePath, m_resource2, m_resourceView2);
-
-		return result;
-	}
-
 	virtual bool Draw1(ID3D11DeviceContext* pDeviceContext)
 	{
 		if (m_vertexBuffer == nullptr)
@@ -190,15 +204,6 @@ public:
 		pDeviceContext->DrawIndexed(m_indexCount, 0, 0);//그리기
 	}
 
-	virtual void SetScale(DirectX::XMFLOAT3 size)
-	{
-		m_vertices[0] = DirectX::XMVectorSet(-0.5f * size.x, 0.5f * size.y, 0.0f, 1.0f);//좌상단
-		m_vertices[1] = DirectX::XMVectorSet(0.5f * size.x, 0.5f * size.y, 0.0f, 1.0f);//우상단
-		m_vertices[2] = DirectX::XMVectorSet(-0.5f * size.x, -0.5f * size.y, 0.0f, 1.0f);//좌하단
-		m_vertices[3] = DirectX::XMVectorSet(0.5f * size.x, -0.5f * size.y, 0.0f, 1.0f);//우하단
-	}
-
-protected://상속 받은 클래스에서만 사용가능하게
 	virtual bool RayCast(
 		const DirectX::XMMATRIX view,
 		const DirectX::XMMATRIX projection,
@@ -214,14 +219,20 @@ protected://상속 받은 클래스에서만 사용가능하게
 		GetRay(view, projection, mouseX, mouseY, origin, direction);
 
 		//폴리곤과 충돌체크
-		result = DirectX::TriangleTests::Intersects(origin, direction, m_vertices[m_indices[0]], m_vertices[m_indices[1]], m_vertices[m_indices[2]], dist);
+		result = DirectX::TriangleTests::Intersects(origin, direction, 
+			m_vertices[m_indices[0]].position,
+			m_vertices[m_indices[1]].position,
+			m_vertices[m_indices[2]].position, dist);
 		if (result)
 		{
 			return true;
 		}
 
 		//폴리곤과 충돌체크
-		result = DirectX::TriangleTests::Intersects(origin, direction, m_vertices[m_indices[3]], m_vertices[m_indices[4]], m_vertices[m_indices[5]], dist);
+		result = DirectX::TriangleTests::Intersects(origin, direction, 
+			m_vertices[m_indices[3]].position, 
+			m_vertices[m_indices[4]].position, 
+			m_vertices[m_indices[5]].position, dist);
 		if (result)
 		{
 			return true;
@@ -231,7 +242,7 @@ protected://상속 받은 클래스에서만 사용가능하게
 	}
 
 private:
-	virtual HRESULT IntializeResource(ID3D11Device* pDevice, const wchar_t* filePath, ID3D11Resource* rc, ID3D11ShaderResourceView* srv)
+	virtual HRESULT IntializeResource(ID3D11Device* pDevice, const wchar_t* filePath, bool state)
 	{
 		HRESULT result;
 
@@ -254,7 +265,7 @@ private:
 			0,
 			0,
 			DirectX::CREATETEX_DEFAULT,
-			&rc);
+			state ? &m_resource1 : &m_resource2);
 
 		if (FAILED(result))
 		{
@@ -270,11 +281,9 @@ private:
 		shaderResourceViewDesc.Texture2D.MipLevels = 1;
 
 		//쉐이더 리소스 뷰 생성
-		result = pDevice->CreateShaderResourceView(rc, &shaderResourceViewDesc, &srv);
+		result = pDevice->CreateShaderResourceView(state ? m_resource1 : m_resource2, &shaderResourceViewDesc, state ? &m_resourceView1 : &m_resourceView2);
 		if (FAILED(result))
 		{
-			srv = nullptr;
-
 			return result;
 		}
 
@@ -311,7 +320,7 @@ private:
 	ID3D11ShaderResourceView* m_resourceView1;//쉐이더 리소스 뷰
 	ID3D11ShaderResourceView* m_resourceView2;//쉐이더 리소스 뷰
 
-	DirectX::XMVECTOR* m_vertices;//정점 배열
+	VertexUV* m_vertices;//정점 배열
 	UINT* m_indices;//인덱스 배열
 	UINT m_indexCount;//인덱스 개수
 	UINT m_stride;//배열마다 간격 바이트

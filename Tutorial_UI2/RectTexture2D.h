@@ -64,7 +64,7 @@ public:
 
 		for (UINT i = 0; i < count; i++)
 		{
-			result = m_textures->InitializeResourceView(pDevice, filePath[i]);
+			result = m_textures[i].InitializeResourceView(pDevice, filePath[i]);
 			if (FAILED(result))
 			{
 				return result;

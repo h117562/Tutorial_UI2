@@ -83,6 +83,9 @@ bool ApplicationClass::Initialize(HWND hwnd)
 		return false;
 	}
 	
+	//블랜드 활성화
+	m_Direct3D->EnableAlphaBlending();
+
 	//기본 뷰 매트릭스 초기화
 	m_CameraClass->SetBaseViewMatrix();
 
@@ -148,6 +151,9 @@ bool ApplicationClass::Frame(HWND hwnd, InputClass* pInputClass, FrameTimer* pFr
 	//그래픽 렌더링
 	Render(hwnd, pInputClass);
 
+	//UI 렌더링
+	m_uiManager->Frame(m_Direct3D, hwnd, m_ShaderManager, m_TextClass, m_CameraClass, pInputClass);
+
 	m_TextClass->EndDraw();
 	m_Direct3D->EndScene();
 
@@ -183,14 +189,5 @@ void ApplicationClass::HandleInput(InputClass* pInputClass, FrameTimer* pFrameTi
 
 void ApplicationClass::Render(HWND hwnd, InputClass* pInputClass)
 {
-	m_Direct3D->TurnZBufferOff();
-	//m_Direct3D->EnableAlphaBlending();
-
-	//UI 렌더링
-	m_uiManager->Frame(m_Direct3D, hwnd, m_ShaderManager, m_TextClass, m_CameraClass, pInputClass);
-
-	//m_Direct3D->DisableAlphaBlending();
-	m_Direct3D->TurnZBufferOn();
-
 	return;
 }

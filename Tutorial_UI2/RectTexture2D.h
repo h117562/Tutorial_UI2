@@ -46,7 +46,6 @@ public:
 		indexBufferDesc.StructureByteStride = 0;
 		initData.pSysMem = &m_indices[0];
 
-
 		//인덱스 버퍼 생성
 		result = pDevice->CreateBuffer(&indexBufferDesc, &initData, &m_indexBuffer);
 		if (FAILED(result))
@@ -73,14 +72,6 @@ public:
 		result = IntializeResource(pDevice, filePath, false);
 
 		return result;
-	}
-
-	virtual void SetScale(DirectX::XMFLOAT3 size)
-	{
-		m_vertices[0].position = DirectX::XMVectorSet(-0.5f * size.x, 0.5f * size.y, 0.0f, 1.0f);//좌상단
-		m_vertices[1].position = DirectX::XMVectorSet(0.5f * size.x, 0.5f * size.y, 0.0f, 1.0f);//우상단
-		m_vertices[2].position = DirectX::XMVectorSet(-0.5f * size.x, -0.5f * size.y, 0.0f, 1.0f);//좌하단
-		m_vertices[3].position = DirectX::XMVectorSet(0.5f * size.x, -0.5f * size.y, 0.0f, 1.0f);//우하단
 	}
 
 protected://상속 받은 클래스에서만 사용가능하게
@@ -117,7 +108,6 @@ protected://상속 받은 클래스에서만 사용가능하게
 		m_indices[3] = 3;
 		m_indices[4] = 0;
 		m_indices[5] = 1;
-
 	}
 
 	~RectTexture2D()
@@ -171,6 +161,7 @@ protected://상속 받은 클래스에서만 사용가능하게
 		}
 	}
 
+	//첫번째 텍스처 리소스로 그리기
 	virtual bool Draw1(ID3D11DeviceContext* pDeviceContext)
 	{
 		if (m_vertexBuffer == nullptr)
@@ -184,6 +175,7 @@ protected://상속 받은 클래스에서만 사용가능하게
 		pDeviceContext->DrawIndexed(m_indexCount, 0, 0);//그리기
 	}
 
+	//두번째 텍스처 리소스로 그리기
 	virtual bool Draw2(ID3D11DeviceContext* pDeviceContext)
 	{
 		if (m_vertexBuffer == nullptr)
@@ -191,6 +183,7 @@ protected://상속 받은 클래스에서만 사용가능하게
 			return false;
 		}
 
+		//두번째 텍스처 리소스가 null이면 강제로 첫번째 텍스처 적용
 		if (m_resourceView2 == nullptr)
 		{
 			Draw1(pDeviceContext);
@@ -205,6 +198,7 @@ protected://상속 받은 클래스에서만 사용가능하게
 	}
 
 	virtual bool RayCast(
+		const DirectX::XMMATRIX world,
 		const DirectX::XMMATRIX view,
 		const DirectX::XMMATRIX projection,
 		const float mouseX,

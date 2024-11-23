@@ -58,7 +58,7 @@ bool TestCanvas::Frame(D3DClass* pD3DClass, HWND hwnd, ShaderManager* pShaderMan
 
 	XMMATRIX world, view, proj;
 
-	world = XMMatrixIdentity()*XMMatrixScaling(100,100,100);
+	world = XMMatrixIdentity()*XMMatrixScaling(500,500,100);
 	pCameraClass->GetBaseViewMatrix(view);
 	pD3DClass->GetOrthoMatrix(proj);
 

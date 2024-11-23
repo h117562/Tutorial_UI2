@@ -48,6 +48,8 @@ bool UIManager::Frame(D3DClass* pD3DClass, HWND hwnd, ShaderManager* pShaderMana
 {
 	bool result, state;
 
+	pD3DClass->TurnZBufferOff();
+
 	//F5 버튼을 눌러 UI를 온오프
 	state = pInputClass->GetKeyReleasedAndPress(DIK_F5);
 	if (state)
@@ -65,6 +67,8 @@ bool UIManager::Frame(D3DClass* pD3DClass, HWND hwnd, ShaderManager* pShaderMana
 	{
 		return false;
 	}
+
+	pD3DClass->TurnZBufferOn();
 
 	return true;
 }

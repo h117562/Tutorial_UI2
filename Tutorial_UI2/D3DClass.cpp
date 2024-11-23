@@ -474,12 +474,12 @@ bool D3DClass::Initialize(HWND hwnd)
 	ZeroMemory(&blendStateDesc, sizeof(D3D11_BLEND_DESC));
 
 	//블랜드 상태 설정(알파 블랜딩)
-	blendStateDesc.AlphaToCoverageEnable = true;
+	blendStateDesc.AlphaToCoverageEnable = false;
 	blendStateDesc.IndependentBlendEnable = false;
 	blendStateDesc.RenderTarget[0].BlendEnable = true;
 	blendStateDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
 	blendStateDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-	blendStateDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;				//SourceBlend 현재 픽셀에 대한 블랜드
+	blendStateDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;				//SourceBlend 현재 픽셀에 대한 블랜드
 	blendStateDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;		//DestinationBlend 이전에 그려진 픽셀들에 대한 블랜드
 	blendStateDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
 	blendStateDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;

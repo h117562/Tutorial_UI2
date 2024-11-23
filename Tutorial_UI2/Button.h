@@ -66,24 +66,15 @@ public:
 			return false;
 		}
 
-
 		if (!m_prev)
 		{
 			//버튼 그리기
-			result = Draw1(pDeviceContext);
-			if (!result)
-			{
-				return false;
-			}
+			Draw(pDeviceContext, 0);
 		}
 		else
 		{
 			//버튼 그리기
-			result = Draw2(pDeviceContext);
-			if (!result)
-			{
-				return false;
-			}
+			Draw(pDeviceContext, 1);
 		}
 
 		return true;

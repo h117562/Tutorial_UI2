@@ -163,6 +163,7 @@
     <ClInclude Include="TestCanvas.h" />
     <ClInclude Include="TextClass.h" />
     <ClInclude Include="Textfield.h" />
+    <ClInclude Include="TextureResource.h" />
     <ClInclude Include="UIShaderClass.h" />
     <ClInclude Include="UIManager.h" />
   </ItemGroup>

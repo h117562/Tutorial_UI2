@@ -16,9 +16,6 @@
     <Filter Include="DirectX">
       <UniqueIdentifier>{d6f27213-ce05-40a4-acf1-b563acf3ac5b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Model">
-      <UniqueIdentifier>{5247796f-741d-4494-8bf7-d90d2e9ff076}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Shader">
       <UniqueIdentifier>{d1eb96d8-5341-459e-854b-dddccbb04bdd}</UniqueIdentifier>
     </Filter>
@@ -39,6 +36,9 @@
     </Filter>
     <Filter Include="UI\Elements\Components">
       <UniqueIdentifier>{1cabc86f-e0e9-481b-b6af-b3b5deba92b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Texture">
+      <UniqueIdentifier>{5247796f-741d-4494-8bf7-d90d2e9ff076}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -139,6 +139,9 @@
     </ClInclude>
     <ClInclude Include="TestCanvas.h">
       <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureResource.h">
+      <Filter>Texture</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

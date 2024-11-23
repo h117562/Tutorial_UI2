@@ -24,13 +24,12 @@ bool TestCanvas::Initialize(ID3D11Device* pDevice)
 		return false;
 	}
 
-	result = m_btn1->SetTexture1(pDevice, L"..//data//assets//mobile-button.png");
-	if (FAILED(result))
-	{
-		return false;
-	}
+	const wchar_t* filepath[2] = {
+		L"..//data//assets//mobile-button.png",
+		L"..//data//assets//mobile-button-1.png"
+	};
 
-	result = m_btn1->SetTexture2(pDevice, L"..//data//assets//mobile-button-1.png");
+	result = m_btn1->SetTexture(pDevice, filepath, 2);
 	if (FAILED(result))
 	{
 		return false;

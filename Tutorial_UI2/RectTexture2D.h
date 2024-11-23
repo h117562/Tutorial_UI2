@@ -2,13 +2,12 @@
 #define _RECT_TEXTURE_2D_
 
 #pragma comment(lib, "d3d11.lib")
-#pragma comment(lib, "../data/DirectXTex.lib")
 
 #include <d3d11.h>
 #include <DirectXMath.h>
 #include <DirectXCollision.h>
 
-#include "../data/DirectXTex.h"
+#include "TextureResource.h"
 #include "GraphicStructures.h"
 
 class RectTexture2D
@@ -56,20 +55,21 @@ public:
 		return S_OK;
 	}
 
-	virtual HRESULT SetTexture1(ID3D11Device* pDevice, const wchar_t* filePath)
+	virtual HRESULT SetTexture(ID3D11Device* pDevice, const wchar_t* filePath[], const unsigned int count)
 	{
 		HRESULT result;
 
-		result = IntializeResource(pDevice, filePath, true);
+		m_textures = new TextureResource[count];
+		m_textureCount = count;
 
-		return result;
-	}
-
-	virtual HRESULT SetTexture2(ID3D11Device* pDevice, const wchar_t* filePath)
-	{
-		HRESULT result;
-
-		result = IntializeResource(pDevice, filePath, false);
+		for (UINT i = 0; i < count; i++)
+		{
+			result = m_textures->InitializeResourceView(pDevice, filePath[i]);
+			if (FAILED(result))
+			{
+				return result;
+			}
+		}
 
 		return result;
 	}
@@ -77,15 +77,14 @@ public:
 protected://상속 받은 클래스에서만 사용가능하게
 	RectTexture2D()
 	{
-		 m_vertexBuffer = nullptr;
-		 m_indexBuffer = nullptr;
-		 m_resource1 = nullptr;
-		 m_resource2 = nullptr;
-		 m_resourceView1 = nullptr;
-		 m_resourceView2 = nullptr;
-		 m_indexCount = 6;
-		 m_stride = sizeof(VertexUV);
-		 m_offset = 0;
+		m_vertexBuffer = nullptr;
+		m_indexBuffer = nullptr;
+		m_indexCount = 6;
+		m_stride = sizeof(VertexUV);
+		m_offset = 0;
+
+		m_textures = nullptr;
+		m_textureCount = 0;
 
 		//변환없이 바로 레이캐스트에 사용하기 위해서 XMVECTOR로 선언
 		m_vertices = new VertexUV[4];
@@ -124,28 +123,10 @@ protected://상속 받은 클래스에서만 사용가능하게
 			m_vertexBuffer = nullptr;
 		}
 
-		if (m_resource1)
+		if (m_textures)
 		{
-			m_resource1->Release();
-			m_resource1 = nullptr;
-		}
-
-		if (m_resourceView1)
-		{
-			m_resourceView1->Release();
-			m_resourceView1 = nullptr;
-		}
-
-		if (m_resource2)
-		{
-			m_resource2->Release();
-			m_resource2 = nullptr;
-		}
-
-		if (m_resourceView2)
-		{
-			m_resourceView2->Release();
-			m_resourceView2 = nullptr;
+			delete[] m_textures;
+			m_textures = nullptr;
 		}
 
 		if (m_vertices)
@@ -161,44 +142,22 @@ protected://상속 받은 클래스에서만 사용가능하게
 		}
 	}
 
-	//첫번째 텍스처 리소스로 그리기
-	virtual bool Draw1(ID3D11DeviceContext* pDeviceContext)
+	virtual void Draw(ID3D11DeviceContext* pDeviceContext, const unsigned int flag)
 	{
-		if (m_vertexBuffer == nullptr)
+		ID3D11ShaderResourceView* srv = nullptr;
+
+		if (m_textureCount >= flag)
 		{
-			return false;
+			srv = m_textures[flag].GetResourceView();
 		}
 
 		pDeviceContext->IASetVertexBuffers(0, 1, &m_vertexBuffer, &m_stride, &m_offset);//버퍼를 인풋 어셈블러에 바인딩
 		pDeviceContext->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);//버퍼를 인풋 어셈블러에 바인딩
-		pDeviceContext->PSSetShaderResources(0, 1, &m_resourceView1);//쉐이더 리소스 뷰를 픽셀 쉐이더에 연계
-		pDeviceContext->DrawIndexed(m_indexCount, 0, 0);//그리기
-	}
-
-	//두번째 텍스처 리소스로 그리기
-	virtual bool Draw2(ID3D11DeviceContext* pDeviceContext)
-	{
-		if (m_vertexBuffer == nullptr)
-		{
-			return false;
-		}
-
-		//두번째 텍스처 리소스가 null이면 강제로 첫번째 텍스처 적용
-		if (m_resourceView2 == nullptr)
-		{
-			Draw1(pDeviceContext);
-
-			return true;
-		}
-
-		pDeviceContext->IASetVertexBuffers(0, 1, &m_vertexBuffer, &m_stride, &m_offset);//버퍼를 인풋 어셈블러에 바인딩
-		pDeviceContext->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);//버퍼를 인풋 어셈블러에 바인딩
-		pDeviceContext->PSSetShaderResources(0, 1, &m_resourceView2);//쉐이더 리소스 뷰를 픽셀 쉐이더에 연계
+		pDeviceContext->PSSetShaderResources(0, 1, &srv);//쉐이더 리소스 뷰를 픽셀 쉐이더에 연계
 		pDeviceContext->DrawIndexed(m_indexCount, 0, 0);//그리기
 	}
 
 	virtual bool RayCast(
-		const DirectX::XMMATRIX world,
 		const DirectX::XMMATRIX view,
 		const DirectX::XMMATRIX projection,
 		const float mouseX,
@@ -236,54 +195,6 @@ protected://상속 받은 클래스에서만 사용가능하게
 	}
 
 private:
-	virtual HRESULT IntializeResource(ID3D11Device* pDevice, const wchar_t* filePath, bool state)
-	{
-		HRESULT result;
-
-		DirectX::ScratchImage image;
-
-		//이미지 데이터를 로드
-		result = DirectX::LoadFromWICFile(filePath, DirectX::WIC_FLAGS_NONE, nullptr, image);
-		if (FAILED(result))
-		{
-			return result;
-		}
-
-		//원본 이미지의 데이터로 텍스쳐 리소스 생성
-		result = DirectX::CreateTextureEx(pDevice,
-			image.GetImages(),
-			image.GetImageCount(),
-			image.GetMetadata(),
-			D3D11_USAGE_DEFAULT,
-			D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET,
-			0,
-			0,
-			DirectX::CREATETEX_DEFAULT,
-			state ? &m_resource1 : &m_resource2);
-
-		if (FAILED(result))
-		{
-			return result;
-		}
-
-		//쉐이더 리소스 뷰 설정
-		D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
-		ZeroMemory(&shaderResourceViewDesc, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
-		shaderResourceViewDesc.Format = image.GetMetadata().format;
-		shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-		shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
-		shaderResourceViewDesc.Texture2D.MipLevels = 1;
-
-		//쉐이더 리소스 뷰 생성
-		result = pDevice->CreateShaderResourceView(state ? m_resource1 : m_resource2, &shaderResourceViewDesc, state ? &m_resourceView1 : &m_resourceView2);
-		if (FAILED(result))
-		{
-			return result;
-		}
-
-		return S_OK;
-	}
-
 	virtual void GetRay(
 		const DirectX::XMMATRIX v,
 		const DirectX::XMMATRIX p,
@@ -309,10 +220,9 @@ private:
 private:
 	ID3D11Buffer* m_vertexBuffer;//정점 버퍼
 	ID3D11Buffer* m_indexBuffer;//인덱스 버퍼
-	ID3D11Resource* m_resource1;//텍스쳐 리소스
-	ID3D11Resource* m_resource2;//텍스쳐 리소스
-	ID3D11ShaderResourceView* m_resourceView1;//쉐이더 리소스 뷰
-	ID3D11ShaderResourceView* m_resourceView2;//쉐이더 리소스 뷰
+
+	TextureResource* m_textures;//텍스쳐 리소스
+	UINT m_textureCount;//텍스쳐 개수
 
 	VertexUV* m_vertices;//정점 배열
 	UINT* m_indices;//인덱스 배열

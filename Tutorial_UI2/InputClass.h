@@ -33,10 +33,13 @@ public:
 	bool GetKeyPressedAndRelease(const unsigned char keyCode);
 	bool GetKeyReleasedAndPress(const unsigned char keyCode);
 
-	bool GetLeftMouseButtonDown();
+	bool GetLeftMouseButtonPressed();
+	bool GetLeftMouseButtonReleased();
 	bool GetRightMouseButtonDown();
-	bool GetLeftMouseButtonUp();
 	bool GetRightMouseButtonUp();
+
+	bool GetLeftMouseButtonPressAndReleased();
+	bool GetLeftMouseButtonReleaseAndPressed();
 
 	void GetMousePosition(long&, long&);
 	void GetNormalizedMousePosition(float&, float&);

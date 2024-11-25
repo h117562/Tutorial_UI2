@@ -81,6 +81,9 @@
     <ClCompile Include="TestCanvas.cpp">
       <Filter>UI</Filter>
     </ClCompile>
+    <ClCompile Include="Plane.h">
+      <Filter>UI\Elements</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FrameTimer.h">

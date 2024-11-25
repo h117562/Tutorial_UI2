@@ -138,6 +138,7 @@
     <ClCompile Include="FrameTimer.cpp" />
     <ClCompile Include="InputClass.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Plane.h" />
     <ClCompile Include="ShaderManager.cpp" />
     <ClCompile Include="SystemClass.cpp" />
     <ClCompile Include="TestCanvas.cpp" />

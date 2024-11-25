@@ -12,28 +12,47 @@ bool TestCanvas::Initialize(ID3D11Device* pDevice)
 {
 	HRESULT result;
 	
-	m_btn1 = new Button;
-	if (!m_btn1)
+	const wchar_t* filepath[2] = {
+	L"..//data//assets//mobile-button.png",
+	L"..//data//assets//mobile-button-1.png"
+	};
+
+	m_btn = new Button[4];
+	if (!m_btn)
 	{
 		return false;
 	}
 	
-	result = m_btn1->InitializeBuffer(pDevice);
-	if (FAILED(result))
+	for (int i = 0; i< 4; i++)
 	{
-		return false;
+		result = m_btn[i].InitializeBuffer(pDevice);
+		if (FAILED(result))
+		{
+			return false;
+		}
+
+		result = m_btn[i].SetTexture(pDevice, filepath, 2);
+		if (FAILED(result))
+		{
+			return false;
+		}
 	}
 
-	const wchar_t* filepath[2] = {
-		L"..//data//assets//mobile-button.png",
-		L"..//data//assets//mobile-button-1.png"
-	};
+	m_btn[0].SetScale(100, 100, 100);
+	m_btn[0].SetAlign(ALIGNMENT_LEFT);
+	m_btn[0].UpdateWorldMatrix(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-	result = m_btn1->SetTexture(pDevice, filepath, 2);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	m_btn[1].SetScale(100, 100, 100);
+	m_btn[1].SetAlign(ALIGNMENT_RIGHT);
+	m_btn[1].UpdateWorldMatrix(SCREEN_WIDTH, SCREEN_HEIGHT);
+
+	m_btn[2].SetScale(100, 100, 100);
+	m_btn[2].SetAlign(ALIGNMENT_TOP);
+	m_btn[2].UpdateWorldMatrix(SCREEN_WIDTH, SCREEN_HEIGHT);
+
+	m_btn[3].SetScale(100, 100, 100);
+	m_btn[3].SetAlign(ALIGNMENT_BOTTOM);
+	m_btn[3].UpdateWorldMatrix(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	return true;
 }
@@ -42,31 +61,79 @@ bool TestCanvas::Frame(D3DClass* pD3DClass, HWND hwnd, ShaderManager* pShaderMan
 {
 	bool result;
 	
-	//POINT mpos;
-	//RECT rect;
-	//XMFLOAT2 npos;
+	POINT mpos;
+	RECT rect;
+	XMFLOAT2 npos;
 
-	//GetCursorPos(&mpos);
-	//ScreenToClient(hwnd, &mpos);
-	//GetClientRect(hwnd, &rect);
+	GetCursorPos(&mpos);
+	ScreenToClient(hwnd, &mpos);
+	GetClientRect(hwnd, &rect);
 
-	//npos = XMFLOAT2(
-	//	((2.0f * static_cast<float>(mpos.x)) / static_cast<float>(rect.right - rect.left)) - 1.0f,
-	//	((-2.0f * static_cast<float>(mpos.y)) / static_cast<float>(rect.bottom - rect.top) + 1.0f)
-	//);//마우스 위치를 정규화
+	npos = XMFLOAT2(
+		((2.0f * static_cast<float>(mpos.x)) / static_cast<float>(rect.right - rect.left)) - 1.0f,
+		((-2.0f * static_cast<float>(mpos.y)) / static_cast<float>(rect.bottom - rect.top) + 1.0f)
+	);//마우스 위치를 정규화
 
-	XMMATRIX world, view, proj;
+	XMMATRIX view, proj;
 
-	world = XMMatrixIdentity()*XMMatrixScaling(500,500,100);
 	pCameraClass->GetBaseViewMatrix(view);
 	pD3DClass->GetOrthoMatrix(proj);
 
-	//m_btn1->IsPressed(pInputClass, view, proj, npos.x, npos.y);
+	for (int i = 0; i < 4; i++)
+	{
+		m_btn[i].Frame(pInputClass, view, proj, npos.x, npos.y);
+	}
 
-	result = m_btn1->Render(pD3DClass->GetDeviceContext(), pShaderManager->GetUIShader(), world, view, proj);
+
+	result = m_btn[0].IsPressed();
+	if (result)
+	{
+		//TODO
+		MessageBox(hwnd, L"왼쪽 버튼 눌림", L"Check", MB_OK);
+	}
+
+	result = m_btn[1].IsPressed();
+	if (result)
+	{
+		//TODO
+		MessageBox(hwnd, L"오른쪽 버튼 눌림", L"Check", MB_OK);
+	}
+
+	result = m_btn[2].IsPressed();
+	if (result)
+	{
+		//TODO
+		MessageBox(hwnd, L"상단 버튼 눌림", L"Check", MB_OK);
+	}
+
+	result = m_btn[3].IsPressed();
+	if (result)
+	{
+		//TODO
+		MessageBox(hwnd, L"하단 버튼 눌림", L"Check", MB_OK);
+	}
+
+
+	result = Render(pD3DClass, pShaderManager, view, proj);
 	if (!result)
 	{
 		return false;
+	}
+
+	return true;
+}
+
+bool TestCanvas::Render(D3DClass* pD3DClass,ShaderManager* pShaderManager, const XMMATRIX& view, const XMMATRIX& proj)
+{
+	bool result;
+
+	for (int i = 0; i < 4; i++)
+	{
+		result = m_btn[i].Render(pD3DClass->GetDeviceContext(), pShaderManager->GetUIShader(), m_btn[i].GetWorldMatrix(), view, proj);
+		if (!result)
+		{
+			return false;
+		}
 	}
 
 	return true;

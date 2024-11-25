@@ -171,7 +171,7 @@ bool UIShaderClass::Initialize(ID3D11Device* pDevice, HWND hwnd)
 	return true;
 }
 
-bool UIShaderClass::Render(ID3D11DeviceContext* pDeviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix)
+bool UIShaderClass::Render(ID3D11DeviceContext* pDeviceContext, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix)
 {
 	bool result;
 

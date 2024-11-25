@@ -258,10 +258,10 @@ bool InputClass::GetKeyReleasedAndPress(const unsigned char keyCode)
 	return false;
 }
 
-//마우스 왼쪽 버튼이 눌렸는지 체크하는 함수
-bool InputClass::GetLeftMouseButtonDown()
+//마우스 왼쪽 버튼이 Press 상태인지 확인하는 함수
+bool InputClass::GetLeftMouseButtonPressed()
 {
-	if (m_mouseState.rgbButtons[0] & 0x80)
+	if (KEYDOWN(m_mouseState.rgbButtons, 0))
 	{
 		return true;
 	}
@@ -269,10 +269,10 @@ bool InputClass::GetLeftMouseButtonDown()
 	return false;
 }
 
-//마우스 오른쪽 버튼이 눌렸는지 체크하는 함수
-bool InputClass::GetRightMouseButtonDown()
+//마우스 왼쪽 버튼이 Release 상태인지 확인하는 함수
+bool InputClass::GetLeftMouseButtonReleased()
 {
-	if (m_mouseState.rgbButtons[1] & 0x80)
+	if (!KEYDOWN(m_mouseState.rgbButtons, 0))
 	{
 		return true;
 	}
@@ -280,8 +280,8 @@ bool InputClass::GetRightMouseButtonDown()
 	return false;
 }
 
-//마우스 왼쪽 버튼이 눌렸다 떗는지 체크하는 함수
-bool InputClass::GetLeftMouseButtonUp()
+//Press 상태에서 Release 상태로 전환 됐는지 확인하는 함수
+bool InputClass::GetLeftMouseButtonPressAndReleased()
 {
 	if (!KEYDOWN(m_mouseState.rgbButtons, 0))
 	{
@@ -298,6 +298,37 @@ bool InputClass::GetLeftMouseButtonUp()
 
 	return false;
 }
+
+//Release 상태에서 Press 상태로 전환 됐는지 확인하는 함수
+bool InputClass::GetLeftMouseButtonReleaseAndPressed()
+{
+	if (KEYDOWN(m_mouseState.rgbButtons, 0))
+	{
+		if (!m_prevMouseState[0])
+		{
+			m_prevMouseState[0] = true;
+			return true;
+		}
+	}
+	else
+	{
+		m_prevMouseState[0] = false;
+	}
+
+	return false;
+}
+
+//마우스 오른쪽 버튼이 눌렸는지 체크하는 함수
+bool InputClass::GetRightMouseButtonDown()
+{
+	if (m_mouseState.rgbButtons[1] & 0x80)
+	{
+		return true;
+	}
+
+	return false;
+}
+
 
 //마우스 오른쪽 버튼이 눌렸다 떗는지 체크하는 함수
 bool InputClass::GetRightMouseButtonUp()

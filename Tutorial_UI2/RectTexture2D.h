@@ -158,18 +158,19 @@ protected://상속 받은 클래스에서만 사용가능하게
 	}
 
 	virtual bool RayCast(
-		const DirectX::XMMATRIX view,
-		const DirectX::XMMATRIX projection,
+		const DirectX::XMMATRIX& world,
+		const DirectX::XMMATRIX& view,
+		const DirectX::XMMATRIX& projection,
 		const float mouseX,
 		const float mouseY) final
 	{
 		bool result = false;
 		float dist = 0.0f;//충돌 거리
 		DirectX::XMVECTOR origin = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-		DirectX::XMVECTOR direction = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+		DirectX::XMVECTOR direction = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);//orthoMatrix의 경우 그냥 Z 직선으로 해도 됨
 
 		//레이 생성
-		GetRay(view, projection, mouseX, mouseY, origin, direction);
+		GetRay(world, view, projection, mouseX, mouseY, origin);
 
 		//폴리곤과 충돌체크
 		result = DirectX::TriangleTests::Intersects(origin, direction, 
@@ -196,14 +197,14 @@ protected://상속 받은 클래스에서만 사용가능하게
 
 private:
 	virtual void GetRay(
-		const DirectX::XMMATRIX v,
-		const DirectX::XMMATRIX p,
+		const DirectX::XMMATRIX& w,
+		const DirectX::XMMATRIX& v,
+		const DirectX::XMMATRIX& p,
 		const float mouseX,
 		const float mouseY, 
-		DirectX::XMVECTOR& origin, 
-		DirectX::XMVECTOR& direction)
+		DirectX::XMVECTOR& origin)
 	{
-		DirectX::XMMATRIX inverseViewProjection;
+		DirectX::XMMATRIX inverseWorld, inverseViewProjection;
 
 		inverseViewProjection = DirectX::XMMatrixMultiply(v, p);//뷰, 투영 행렬 곱
 		inverseViewProjection = DirectX::XMMatrixInverse(nullptr, inverseViewProjection);//역행렬
@@ -211,10 +212,14 @@ private:
 		origin = DirectX::XMVectorSet(mouseX, mouseY, 0.0f, 1.0f);//레이 시작
 		origin = DirectX::XMVector3Transform(origin, inverseViewProjection);//벡터 변환
 
-		direction = DirectX::XMVectorSet(mouseX, mouseY, 1.0f, 1.0f);//레이 끝
-		direction = DirectX::XMVector3Transform(direction, inverseViewProjection);//뷰.투영 역행렬로 벡터 변환
-		direction = DirectX::XMVectorSubtract(direction, origin);//레이 끝에서 시작을 빼서 방향을 구함
-		direction = DirectX::XMVector3Normalize(direction);//레이 방향을 정규화
+		inverseWorld = DirectX::XMMatrixInverse(nullptr, w);//역행렬
+
+		origin = XMVector3TransformCoord(origin, inverseWorld);//벡터 변환
+
+		//direction = DirectX::XMVectorSet(mouseX, mouseY, 1.0f, 1.0f);//레이 끝
+		//direction = DirectX::XMVector3Transform(direction, inverseViewProjection);//뷰.투영 역행렬로 벡터 변환
+		//direction = DirectX::XMVectorSubtract(direction, origin);//레이 끝에서 시작을 빼서 방향을 구함
+		//direction = DirectX::XMVector3Normalize(direction);//레이 방향을 정규화
 	}
 
 private:

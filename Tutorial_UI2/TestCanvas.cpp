@@ -12,11 +12,6 @@ bool TestCanvas::Initialize(ID3D11Device* pDevice)
 {
 	HRESULT result;
 	
-	const wchar_t* filepath[2] = {
-	L"..//data//assets//mobile-button.png",
-	L"..//data//assets//mobile-button-1.png"
-	};
-
 	m_btn = new Button[4];
 	if (!m_btn)
 	{
@@ -25,20 +20,18 @@ bool TestCanvas::Initialize(ID3D11Device* pDevice)
 	
 	for (int i = 0; i< 4; i++)
 	{
-		result = m_btn[i].InitializeBuffer(pDevice);
-		if (FAILED(result))
-		{
-			return false;
-		}
-
-		result = m_btn[i].SetTexture(pDevice, filepath, 2);
+		result = m_btn[i].Initialize(pDevice, 
+			L"..//data//assets//mobile-button.png",
+			L"..//data//assets//mobile-button-1.png",
+			L"..//data//assets//mobile-button.png"
+		);
 		if (FAILED(result))
 		{
 			return false;
 		}
 	}
 
-	m_btn[0].SetScale(100, 100, 100);
+	m_btn[0].SetScale(200, 100, 100);
 	m_btn[0].SetAlign(ALIGNMENT_LEFT);
 	m_btn[0].UpdateWorldMatrix(SCREEN_WIDTH, SCREEN_HEIGHT);
 
@@ -46,13 +39,19 @@ bool TestCanvas::Initialize(ID3D11Device* pDevice)
 	m_btn[1].SetAlign(ALIGNMENT_RIGHT);
 	m_btn[1].UpdateWorldMatrix(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-	m_btn[2].SetScale(100, 100, 100);
+	m_btn[2].SetScale(100, 200, 100);
 	m_btn[2].SetAlign(ALIGNMENT_TOP);
 	m_btn[2].UpdateWorldMatrix(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	m_btn[3].SetScale(100, 100, 100);
 	m_btn[3].SetAlign(ALIGNMENT_BOTTOM);
 	m_btn[3].UpdateWorldMatrix(SCREEN_WIDTH, SCREEN_HEIGHT);
+
+	m_plane = new Plane;
+	if ()
+	{
+
+	}
 
 	return true;
 }

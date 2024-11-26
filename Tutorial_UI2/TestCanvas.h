@@ -1,12 +1,15 @@
 #ifndef _TEST_CANVAS_
 #define _TEST_CANVAS_
 
-#include "Button.h"
 #include "D3DClass.h"
 #include "TextClass.h"
 #include "InputClass.h"
 #include "ShaderManager.h"
 #include "CameraClass.h"
+
+//Elements
+#include "Button.h"
+#include "Plane.h"
 
 extern unsigned int SCREEN_WIDTH;	//윈도우 너비
 extern unsigned int SCREEN_HEIGHT;	//윈도우 높이
@@ -25,6 +28,7 @@ public:
 
 private:
 	Button* m_btn;
+	Plane* m_plane;
 
 	bool m_active;
 };

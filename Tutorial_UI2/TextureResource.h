@@ -75,7 +75,7 @@ public:
 		shaderResourceViewDesc.Format = image.GetMetadata().format;
 		shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 		shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
-		shaderResourceViewDesc.Texture2D.MipLevels = 1;
+		shaderResourceViewDesc.Texture2D.MipLevels = -1;
 
 		//溅捞歹 府家胶 轰 积己
 		result = pDevice->CreateShaderResourceView(resource, &shaderResourceViewDesc, &resourceView);

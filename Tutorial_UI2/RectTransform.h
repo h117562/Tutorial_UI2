@@ -121,38 +121,42 @@ public:
 private:
 	virtual DirectX::XMMATRIX Alignment(const unsigned int& screenWidth, const unsigned int& screenHeight, unsigned int flag)
 	{
-		DirectX::XMMATRIX pos;
+		DirectX::XMMATRIX mat;
 		float x, y;
 
 		switch (flag)
 		{
 		case ALIGNMENT_CENTER://Á¤Áß¾Ó
-			pos = DirectX::XMMatrixTranslation(m_position.x, m_position.y, m_position.z);
+			mat = DirectX::XMMatrixTranslation(m_position.x, m_position.y, m_position.z);
 			break;
 		case ALIGNMENT_LEFT://ÁÂÃø Áß¾Ó
-			x = (float)screenWidth / (m_scale.x * 2.0f) - 0.5f;
-			pos = DirectX::XMMatrixTranslation(-x + m_position.x, m_position.y, m_position.z);
+			x = (float)screenWidth / (m_scale.x * 2.0f) - 0.5f + m_margin.x;
+			mat = DirectX::XMMatrixTranslation(-x + m_position.x, m_position.y, m_position.z);
 			break;
 		case ALIGNMENT_RIGHT://¿ìÃø Áß¾Ó
-			x = (float)screenWidth / (m_scale.x * 2.0f) - 0.5f;
-			pos = DirectX::XMMatrixTranslation(x + m_position.x, m_position.y, m_position.z);
+			x = (float)screenWidth / (m_scale.x * 2.0f) - 0.5f + m_margin.x;
+			mat = DirectX::XMMatrixTranslation(x + m_position.x, m_position.y, m_position.z);
 			break;
 		case ALIGNMENT_TOP://»ó´Ü Áß¾Ó
-			y = (float)screenHeight / (m_scale.y * 2.0f) - 0.5f;
-			pos = DirectX::XMMatrixTranslation(m_position.x, y + m_position.y, m_position.z);
+			y = (float)screenHeight / (m_scale.y * 2.0f) - 0.5f + m_margin.y;
+			mat = DirectX::XMMatrixTranslation(m_position.x, y + m_position.y, m_position.z);
 			break;
 		case ALIGNMENT_BOTTOM://ÇÏ´Ü Áß¾Ó
-			y = (float)screenHeight / (m_scale.y * 2.0f) - 0.5f;
-			pos = DirectX::XMMatrixTranslation(m_position.x, -y + m_position.y, m_position.z);
+			y = (float)screenHeight / (m_scale.y * 2.0f) - 0.5f + m_margin.y;
+			mat = DirectX::XMMatrixTranslation(m_position.x, -y + m_position.y, m_position.z);
 			break;
 
 			//ALIGNMENT_LEFT_TOP,//ÁÂ»ó´Ü
 			//ALIGNMENT_LEFT_BOTTOM,//ÁÂÇÏ´Ü
 			//ALIGNMENT_RIGHT_TOP,//¿ì»ó´Ü
 			//ALIGNMENT_RIGHT_BOTTOM,//¿ìÇÏ´Ü
+
+		default://ALIGNMENT_CENTER
+			mat = DirectX::XMMatrixTranslation(m_position.x, m_position.y, m_position.z);
+			break;
 		}
 
-		return pos;
+		return mat;
 	}
 
 private:

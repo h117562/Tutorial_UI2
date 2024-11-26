@@ -12,7 +12,74 @@
 
 class RectTexture2D
 {
-public:
+protected://상속 받은 클래스에서만 사용가능하게
+	RectTexture2D()
+	{
+		m_vertexBuffer = nullptr;
+		m_indexBuffer = nullptr;
+		m_indexCount = 6;
+		m_stride = sizeof(VertexUV);
+		m_offset = 0;
+
+		m_textures = nullptr;
+		m_textureCount = 0;
+
+		//변환없이 바로 레이캐스트에 사용하기 위해서 XMVECTOR로 선언
+		m_vertices = new VertexUV[4];
+
+		m_vertices[0].position = DirectX::XMVectorSet(-0.5f, 0.5f, 0.0f, 1.0f);//좌상단
+		m_vertices[1].position = DirectX::XMVectorSet(0.5f, 0.5f, 0.0f, 1.0f);//우상단
+		m_vertices[2].position = DirectX::XMVectorSet(-0.5f, -0.5f, 0.0f, 1.0f);//좌하단
+		m_vertices[3].position = DirectX::XMVectorSet(0.5f, -0.5f, 0.0f, 1.0f);//우하단
+
+		m_vertices[0].textureCoord = DirectX::XMFLOAT2(0.0f, 0.0f);//좌상단
+		m_vertices[1].textureCoord = DirectX::XMFLOAT2(1.0f, 0.0f);//우상단
+		m_vertices[2].textureCoord = DirectX::XMFLOAT2(0.0f, 1.0f);//좌하단
+		m_vertices[3].textureCoord = DirectX::XMFLOAT2(1.0f, 1.0f);//우하단
+
+		m_indices = new UINT[m_indexCount];
+
+		m_indices[0] = 0;
+		m_indices[1] = 3;
+		m_indices[2] = 2;
+		m_indices[3] = 3;
+		m_indices[4] = 0;
+		m_indices[5] = 1;
+	}
+
+	virtual ~RectTexture2D()
+	{
+		if (m_indexBuffer)
+		{
+			m_indexBuffer->Release();
+			m_indexBuffer = nullptr;
+		}
+
+		if (m_vertexBuffer)
+		{
+			m_vertexBuffer->Release();
+			m_vertexBuffer = nullptr;
+		}
+
+		if (m_textures)
+		{
+			delete[] m_textures;
+			m_textures = nullptr;
+		}
+
+		if (m_vertices)
+		{
+			delete[] m_vertices;
+			m_vertices = nullptr;
+		}
+
+		if (m_indices)
+		{
+			delete[] m_indices;
+			m_indices = nullptr;
+		}
+	}
+
 	virtual HRESULT InitializeBuffer(ID3D11Device* pDevice)
 	{
 		HRESULT result;
@@ -72,74 +139,6 @@ public:
 		}
 
 		return result;
-	}
-
-protected://상속 받은 클래스에서만 사용가능하게
-	RectTexture2D()
-	{
-		m_vertexBuffer = nullptr;
-		m_indexBuffer = nullptr;
-		m_indexCount = 6;
-		m_stride = sizeof(VertexUV);
-		m_offset = 0;
-
-		m_textures = nullptr;
-		m_textureCount = 0;
-
-		//변환없이 바로 레이캐스트에 사용하기 위해서 XMVECTOR로 선언
-		m_vertices = new VertexUV[4];
-
-		m_vertices[0].position = DirectX::XMVectorSet(-0.5f, 0.5f, 0.0f, 1.0f);//좌상단
-		m_vertices[1].position = DirectX::XMVectorSet(0.5f, 0.5f, 0.0f, 1.0f);//우상단
-		m_vertices[2].position = DirectX::XMVectorSet(-0.5f, -0.5f, 0.0f, 1.0f);//좌하단
-		m_vertices[3].position = DirectX::XMVectorSet(0.5f, -0.5f, 0.0f, 1.0f);//우하단
-
-		m_vertices[0].textureCoord = DirectX::XMFLOAT2(0.0f, 0.0f);//좌상단
-		m_vertices[1].textureCoord = DirectX::XMFLOAT2(1.0f, 0.0f);//우상단
-		m_vertices[2].textureCoord = DirectX::XMFLOAT2(0.0f, 1.0f);//좌하단
-		m_vertices[3].textureCoord = DirectX::XMFLOAT2(1.0f, 1.0f);//우하단
-
-		m_indices = new UINT[m_indexCount];
-
-		m_indices[0] = 0;
-		m_indices[1] = 3;
-		m_indices[2] = 2;
-		m_indices[3] = 3;
-		m_indices[4] = 0;
-		m_indices[5] = 1;
-	}
-
-	~RectTexture2D()
-	{
-		if (m_indexBuffer)
-		{
-			m_indexBuffer->Release();
-			m_indexBuffer = nullptr;
-		}
-
-		if (m_vertexBuffer)
-		{
-			m_vertexBuffer->Release();
-			m_vertexBuffer = nullptr;
-		}
-
-		if (m_textures)
-		{
-			delete[] m_textures;
-			m_textures = nullptr;
-		}
-
-		if (m_vertices)
-		{
-			delete[] m_vertices;
-			m_vertices = nullptr;
-		}
-
-		if (m_indices)
-		{
-			delete[] m_indices;
-			m_indices = nullptr;
-		}
 	}
 
 	virtual void Draw(ID3D11DeviceContext* pDeviceContext, const unsigned int flag)

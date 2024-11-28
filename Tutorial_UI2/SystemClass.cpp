@@ -19,7 +19,7 @@ bool SystemClass::Initialize()
 {
 	bool result;
 
-	//디스플레이 설정 초기화
+	//디스플레이 설정 초기화 - Settings.txt 파일로 부터 설정 가져옴
 	InitializeDisplaySettings();
 
 	//윈도우 초기화
@@ -89,7 +89,7 @@ bool SystemClass::InitializeWindow()
 	m_hinstance = GetModuleHandle(NULL);
 
 	//윈도우 클래스 이름
-	m_applicationName = L"Tutorial Reflect";
+	m_applicationName = L"UI Test";
 
 	//윈도우 클래스 설정
 	wc.cbSize = sizeof(WNDCLASSEX);
@@ -289,14 +289,14 @@ void SystemClass::Shutdown()
 
 	//윈도우 핸들 파괴
 	DestroyWindow(m_hwnd);
-	m_hwnd = NULL;
+	m_hwnd = nullptr;
 
 	//등록된 윈도우 클래스를 해제
 	UnregisterClass(m_applicationName, m_hinstance);
-	m_hinstance = NULL;
+	m_hinstance = nullptr;
 
-	//SystemClass 핸들 포인터를 NULL로 초기화
-	ApplicationHandle = NULL;
+	//SystemClass 포인터를 nullptr로 초기화
+	ApplicationHandle = nullptr;
 
 	return;
 }
@@ -392,14 +392,14 @@ bool SystemClass::SearchOptions(string target, const char* str)
 LRESULT CALLBACK SystemClass::MessageHandler(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
 	
-	if (m_inputClass->GetTextInputFocus())
-	{
-		if (msg == WM_CHAR)
-		{
-			//글자가 입력될 때 마다 inputClass의 배열변수에 밀어넣기
-			m_inputClass->AddTextInputData(static_cast<wchar_t>(wparam));
-		}
-	}
+	//if (m_inputClass->GetTextInputFocus())
+	//{
+	//	if (msg == WM_CHAR)
+	//	{
+	//		//글자가 입력될 때 마다 inputClass의 배열변수에 밀어넣기
+	//		m_inputClass->AddTextInputData(static_cast<wchar_t>(wparam));
+	//	}
+	//}
 
 	return DefWindowProc(hwnd, msg, wparam, lparam);
 }

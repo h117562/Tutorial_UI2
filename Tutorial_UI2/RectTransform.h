@@ -30,7 +30,7 @@ protected:
 		m_worldMatrix = DirectX::XMMatrixIdentity();
 	}
 
-	~RectTransform()
+	virtual ~RectTransform()
 	{
 	}
 

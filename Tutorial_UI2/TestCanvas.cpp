@@ -2,10 +2,24 @@
 
 TestCanvas::TestCanvas()
 {
+	m_btn = 0;
+	m_plane = 0;
+	m_active = false;
 }
 
 TestCanvas::~TestCanvas()
 {
+	if (m_btn)
+	{
+		delete[] m_btn;
+		m_btn = nullptr;
+	}
+
+	if (m_plane)
+	{
+		delete m_plane;
+		m_plane = nullptr;
+	}
 }
 
 bool TestCanvas::Initialize(ID3D11Device* pDevice)
@@ -48,10 +62,19 @@ bool TestCanvas::Initialize(ID3D11Device* pDevice)
 	m_btn[3].UpdateWorldMatrix(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	m_plane = new Plane;
-	if ()
+	if (!m_plane)
 	{
-
+		return false;
 	}
+
+	result = m_plane->Initialize(pDevice, L"..//data//assets//panel-2.png");
+	if (FAILED(result))
+	{
+		return false;
+	}
+
+	m_plane->SetScale(500, 500, 500);
+	m_plane->UpdateWorldMatrix(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	return true;
 }
@@ -125,6 +148,12 @@ bool TestCanvas::Frame(D3DClass* pD3DClass, HWND hwnd, ShaderManager* pShaderMan
 bool TestCanvas::Render(D3DClass* pD3DClass,ShaderManager* pShaderManager, const XMMATRIX& view, const XMMATRIX& proj)
 {
 	bool result;
+
+	result = m_plane->Render(pD3DClass->GetDeviceContext(), pShaderManager->GetUIShader(), m_plane->GetWorldMatrix(), view, proj);
+	if (!result)
+	{
+		return false;
+	}
 
 	for (int i = 0; i < 4; i++)
 	{

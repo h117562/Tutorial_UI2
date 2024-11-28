@@ -6,7 +6,6 @@ InputClass::InputClass()
 	m_keyboardDevice = 0;
 	m_mouseDevice = 0;
 	m_sensitivity = 0.1f;
-	m_textInputFocus = false;
 }
 
 InputClass::~InputClass()
@@ -347,49 +346,4 @@ bool InputClass::GetRightMouseButtonUp()
 	}
 
 	return false;
-}
-
-///////////////////////////////Test///////////////////////////
-//텍스트 입력 포커스 설정
-void InputClass::SetTextInputFocus(bool state)
-{
-	m_textInputFocus = state;
-
-	//포커스 상태가 바뀌면 여태 입력했던 데이터 제거
-	ClearTextInputData();
-}
-
-//텍스트 입력 포커스 확인
-bool InputClass::GetTextInputFocus()
-{
-	if (this == nullptr)//static 콜백 함수에서 동적 할당되지 않는 상태에서 호출하는 문제를 방지하기 위해 넣음
-	{
-		return false;
-	}
-
-	return m_textInputFocus;
-}
-
-//배열에 글자 저장
-void InputClass::AddTextInputData(const wchar_t text)
-{
-	m_textInputData += text;
-}
-
-//가장 마지막 글자 제거
-void InputClass::SubstractTextInputData()
-{
-	m_textInputData.pop_back();
-}
-
-//텍스트 배열 반환
-const wchar_t* InputClass::GetTextInputData()
-{
-	return m_textInputData.c_str();
-}
-
-//텍스트 배열 초기화
-void InputClass::ClearTextInputData()
-{
-	m_textInputData.clear();
 }

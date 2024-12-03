@@ -146,6 +146,9 @@
     <ClInclude Include="TextureResource.h">
       <Filter>Texture</Filter>
     </ClInclude>
+    <ClInclude Include="EventClass.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\TexturePS.hlsl">

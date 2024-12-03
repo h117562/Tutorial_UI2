@@ -22,6 +22,7 @@ TestCanvas::~TestCanvas()
 	}
 }
 
+#include "EventClass.h"
 bool TestCanvas::Initialize(ID3D11Device* pDevice)
 {
 	HRESULT result;
@@ -167,9 +168,9 @@ bool TestCanvas::Render(D3DClass* pD3DClass,ShaderManager* pShaderManager, const
 	return true;
 }
 
-void TestCanvas::SetActive(bool state)
+void TestCanvas::SetActive()
 {
-	m_active = state;
+	m_active ^= true;
 }
 
 bool TestCanvas::GetActive()

@@ -23,7 +23,7 @@ public:
 	bool Initialize(ID3D11Device*);
 	bool Frame(D3DClass*, HWND, ShaderManager*, TextClass*, CameraClass*, InputClass*);
 	bool Render(D3DClass*, ShaderManager*, const XMMATRIX&, const XMMATRIX&);
-	void SetActive(bool state);
+	void SetActive();
 	bool GetActive();
 
 private:

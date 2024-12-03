@@ -8,6 +8,7 @@
 #include "ApplicationClass.h"
 #include "InputClass.h"
 #include "FrameTimer.h"
+#include "EventClass.h"
 
 //////////////////////////////////////////////////////
 //////					GLOBAL					//////
@@ -50,7 +51,6 @@ private:
 	ApplicationClass* m_applicationClass;
 	InputClass* m_inputClass;
 	FrameTimer* m_frameTimer;
-
 };
 
 static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);

@@ -147,6 +147,7 @@
     <ClCompile Include="UIManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="EventClass.h" />
     <ClInclude Include="RectTransform.h" />
     <ClInclude Include="ApplicationClass.h" />
     <ClInclude Include="Button.h" />

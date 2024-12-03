@@ -8,6 +8,7 @@
 #include "FrameTimer.h"
 #include "UIManager.h"
 #include "TextClass.h"
+#include "EventClass.h"
 
 class ApplicationClass
 {

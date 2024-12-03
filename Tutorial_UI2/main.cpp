@@ -12,7 +12,7 @@
 //nCmdshow ShowWindow() 커맨드 0~11 정도 있음 ex) SW_HIDE 0
 //Window는 여기서 구현하지 않고 SystemClass에서 따로
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR pCmdLine, int nCmdshow)
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine, int nCmdshow)
 {
 	bool result;
 

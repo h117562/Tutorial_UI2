@@ -4,6 +4,7 @@
 #include "DebugInfo.h"
 #include "ShaderManager.h"
 #include "InputClass.h"
+#include "EventClass.h"
 
 #include "TestCanvas.h"
 

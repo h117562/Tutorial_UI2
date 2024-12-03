@@ -38,7 +38,7 @@ bool UIManager::Initialize(D3DClass* pD3Dclass)
 		return false;
 	}
 
-	m_canvas.SetActive(true);
+	EventClass::GetInstance().Subscribe(UIEvent::EVENT_TOGGLE_TEST_CANVAS, std::bind(&TestCanvas::SetActive, &m_canvas));
 
 	return true;
 }
@@ -62,10 +62,13 @@ bool UIManager::Frame(D3DClass* pD3DClass, HWND hwnd, ShaderManager* pShaderMana
 		m_debugUI->Render(pTextClass, pCameraClass, pInputClass);
 	}
 
-	result = m_canvas.Frame(pD3DClass, hwnd, pShaderManager, pTextClass, pCameraClass, pInputClass);
-	if (!result)
+	if (m_canvas.GetActive())
 	{
-		return false;
+		result = m_canvas.Frame(pD3DClass, hwnd, pShaderManager, pTextClass, pCameraClass, pInputClass);
+		if (!result)
+		{
+			return false;
+		}
 	}
 
 	pD3DClass->TurnZBufferOn();

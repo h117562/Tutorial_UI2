@@ -52,13 +52,11 @@ void CameraClass::SetPosition(DirectX::XMFLOAT3 position)
 	return;
 }
 
-
 void CameraClass::SetRotation(DirectX::XMFLOAT3 rotation)
 {
 	m_rotation = rotation;
 	return;
 }
-
 
 void CameraClass::GetPosition(DirectX::XMFLOAT3& position)
 {
@@ -66,10 +64,21 @@ void CameraClass::GetPosition(DirectX::XMFLOAT3& position)
 	return;
 }
 
+void CameraClass::GetPosition(DirectX::XMINT3& position)
+{
+	position = DirectX::XMINT3(static_cast<int>(m_position.x), static_cast<int>(m_position.y), static_cast<int>(m_position.z));
+	return;
+}
 
 void CameraClass::GetRotation(DirectX::XMFLOAT3& rotation)
 {
 	rotation = m_rotation;
+	return;
+}
+
+void CameraClass::GetRotation(DirectX::XMINT3& rotation)
+{
+	rotation = DirectX::XMINT3(static_cast<int>(m_rotation.x), static_cast<int>(m_rotation.y), static_cast<int>(m_rotation.z));
 	return;
 }
 

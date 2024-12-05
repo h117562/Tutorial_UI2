@@ -15,7 +15,9 @@ public:
 	void SetFrameTime(const float);
 
 	void GetPosition(DirectX::XMFLOAT3&);
+	void GetPosition(DirectX::XMINT3&);
 	void GetRotation(DirectX::XMFLOAT3&);
+	void GetRotation(DirectX::XMINT3&);
 
 	void Render();
 

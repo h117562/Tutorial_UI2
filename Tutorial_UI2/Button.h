@@ -6,14 +6,6 @@
 #include "ShaderManager.h"
 #include "InputClass.h"
 
-enum ButtonState
-{
-	BUTTON_IDLE,//평상시 상태
-	BUTTON_HOVER,//마우스를 버튼 위에 올린 상태
-	BUTTON_PRESSED,//누르고 있는 중인 상태
-	BUTTON_RELEASED//버튼이 눌렸다고 판정한 상태
-};
-
 class Button : public RectTransform, public RectTexture2D
 {
 public:
@@ -55,7 +47,7 @@ public:
 				m_skip = false;//스킵 해제
 			}
 
-			return;//함수 종료
+			return;//함수 조기 종료 (뒤에 있는 연산은 불필요하게 됨)
 		}
 
 		//마우스가 버튼 범위 내에 없을 때
@@ -69,7 +61,7 @@ public:
 				m_skip = true;//스킵 상태
 			}
 
-			return;//함수 종료
+			return;//함수 조기 종료
 		}
 		else//버튼 범위 내에 있을 때
 		{
@@ -98,9 +90,11 @@ public:
 
 	bool IsPressed()
 	{
+		//버튼이 눌렸다면 스택 방식 처럼 버튼이 눌렸는지 체크할 때 까지 Release 상태를 유지
+		//따라서 버튼을 매 프레임마다 눌렸는지 체크해야함 (예외로 버튼 범위를 벗어난 클릭을 하게 되면 초기상태로)
 		if (m_state == BUTTON_RELEASED)
 		{
-			m_state = 0;
+			m_state = BUTTON_IDLE;//버튼 눌렸는지 체크했다면 초기 상태로 되돌리고 true 리턴
 
 			return true;
 		}
@@ -139,7 +133,16 @@ public:
 	}
 
 private:
-	UINT m_state;
+		enum ButtonState
+		{
+			BUTTON_IDLE,//평상시 상태
+			BUTTON_HOVER,//마우스를 버튼 위에 올린 상태
+			BUTTON_PRESSED,//누르고 있는 중인 상태
+			BUTTON_RELEASED//버튼이 눌렸다고 판정한 상태
+		};
+
+private:
+	ButtonState m_state;
 	bool m_skip;
 };
 

@@ -183,11 +183,17 @@ void ApplicationClass::HandleInput(InputClass* pInputClass, FrameTimer* pFrameTi
 	pInputClass->GetMouseDelta(deltaX, deltaY);
 	m_CameraClass->UpdateRotation(deltaX, deltaY);
 
-	if (pInputClass->GetKeyPressed(DIK_F))
+	state = pInputClass->GetKeyPressedAndRelease(DIK_F5);
+	if (state)
 	{
-		EventClass::GetInstance().Publish(UIEvent::EVENT_TOGGLE_TEST_CANVAS);
+		EventClass::GetInstance().Publish(UI_EVENT::EVENT_TOGGLE_DEBUG_MODE);
 	}
-	
+
+	state = pInputClass->GetKeyPressedAndRelease(DIK_F6);
+	if (state)
+	{
+		EventClass::GetInstance().Publish(UI_EVENT::EVENT_TOGGLE_TEST_CANVAS);
+	}
 
 	return;
 }

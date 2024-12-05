@@ -10,6 +10,8 @@
 //Elements
 #include "Button.h"
 #include "Plane.h"
+#include "Slider.h"
+#include "Textfield.h"
 
 extern unsigned int SCREEN_WIDTH;	//윈도우 너비
 extern unsigned int SCREEN_HEIGHT;	//윈도우 높이
@@ -21,9 +23,10 @@ public:
 	~TestCanvas();
 
 	bool Initialize(ID3D11Device*);
-	bool Frame(D3DClass*, HWND, ShaderManager*, TextClass*, CameraClass*, InputClass*);
+	void Frame(D3DClass*, HWND, ShaderManager*, TextClass*, CameraClass*, InputClass*);
 	bool Render(D3DClass*, ShaderManager*, const XMMATRIX&, const XMMATRIX&);
-	void SetActive();
+	void ToggleActive();
+	void SetActive(bool state);
 	bool GetActive();
 
 private:

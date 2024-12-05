@@ -1,11 +1,11 @@
-#ifndef _INTERFACE_MANAGER_H_
-#define _INTERFACE_MANAGER_H_
+#ifndef _USER_INTERFACE_MANAGER_H_
+#define _USER_INTERFACE_MANAGER_H_
 
-#include "DebugInfo.h"
 #include "ShaderManager.h"
 #include "InputClass.h"
 #include "EventClass.h"
 
+#include "DebugInfo.h"
 #include "TestCanvas.h"
 
 class UIManager
@@ -20,10 +20,8 @@ public:
 	void Shutdown();
 
 private:
-	DebugInfo* m_debugUI;
+	DebugInfo m_debugUI;
 	TestCanvas m_canvas;
-
-	bool m_enableDebugUI;
 };
 
 #endif

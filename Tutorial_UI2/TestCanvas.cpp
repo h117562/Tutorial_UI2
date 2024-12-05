@@ -4,7 +4,7 @@ TestCanvas::TestCanvas()
 {
 	m_btn = 0;
 	m_plane = 0;
-	m_active = false;
+	m_active = true;
 }
 
 TestCanvas::~TestCanvas()
@@ -80,9 +80,9 @@ bool TestCanvas::Initialize(ID3D11Device* pDevice)
 	return true;
 }
 
-bool TestCanvas::Frame(D3DClass* pD3DClass, HWND hwnd, ShaderManager* pShaderManager, TextClass* pTextClass, CameraClass* pCameraClass, InputClass* pInputClass)
+void TestCanvas::Frame(D3DClass* pD3DClass, HWND hwnd, ShaderManager* pShaderManager, TextClass* pTextClass, CameraClass* pCameraClass, InputClass* pInputClass)
 {
-	bool result;
+	bool state;
 	
 	POINT mpos;
 	RECT rect;
@@ -108,42 +108,37 @@ bool TestCanvas::Frame(D3DClass* pD3DClass, HWND hwnd, ShaderManager* pShaderMan
 	}
 
 
-	result = m_btn[0].IsPressed();
-	if (result)
+	state = m_btn[0].IsPressed();
+	if (state)
 	{
 		//TODO
 		MessageBox(hwnd, L"왼쪽 버튼 눌림", L"Check", MB_OK);
 	}
 
-	result = m_btn[1].IsPressed();
-	if (result)
+	state = m_btn[1].IsPressed();
+	if (state)
 	{
 		//TODO
 		MessageBox(hwnd, L"오른쪽 버튼 눌림", L"Check", MB_OK);
 	}
 
-	result = m_btn[2].IsPressed();
-	if (result)
+	state = m_btn[2].IsPressed();
+	if (state)
 	{
 		//TODO
 		MessageBox(hwnd, L"상단 버튼 눌림", L"Check", MB_OK);
 	}
 
-	result = m_btn[3].IsPressed();
-	if (result)
+	state = m_btn[3].IsPressed();
+	if (state)
 	{
 		//TODO
 		MessageBox(hwnd, L"하단 버튼 눌림", L"Check", MB_OK);
 	}
 
-
-	result = Render(pD3DClass, pShaderManager, view, proj);
-	if (!result)
-	{
-		return false;
-	}
-
-	return true;
+	Render(pD3DClass, pShaderManager, view, proj);
+	
+	return;
 }
 
 bool TestCanvas::Render(D3DClass* pD3DClass,ShaderManager* pShaderManager, const XMMATRIX& view, const XMMATRIX& proj)
@@ -168,9 +163,14 @@ bool TestCanvas::Render(D3DClass* pD3DClass,ShaderManager* pShaderManager, const
 	return true;
 }
 
-void TestCanvas::SetActive()
+void TestCanvas::ToggleActive()
 {
 	m_active ^= true;
+}
+
+void TestCanvas::SetActive(bool state)
+{
+	m_active = state;
 }
 
 bool TestCanvas::GetActive()

@@ -17,8 +17,8 @@ public:
 	bool Initialize(IDXGISwapChain*);
 	void Shutdown();
 
-	void RenderText(const wchar_t* text, float x, float y, float width, float height);
-	void RenderText(const wchar_t* text, float x, float y, float width, float height, IDWriteTextFormat*, ID2D1SolidColorBrush*);
+	void RenderText(const wchar_t* text, const float& x, const float& y, const float& width, const float& height);
+	void RenderText(const wchar_t* text, const float& x, const float& y, const float& width, const float& height, IDWriteTextFormat*, ID2D1SolidColorBrush*);
 	void BeginDraw();
 	void EndDraw();
 

@@ -4,6 +4,7 @@ TestCanvas::TestCanvas()
 {
 	m_btn = 0;
 	m_plane = 0;
+	m_textField = 0;
 	m_active = true;
 }
 
@@ -19,6 +20,12 @@ TestCanvas::~TestCanvas()
 	{
 		delete m_plane;
 		m_plane = nullptr;
+	}
+
+	if (m_textField)
+	{
+		delete m_textField;
+		m_textField = nullptr;
 	}
 }
 
@@ -46,21 +53,21 @@ bool TestCanvas::Initialize(ID3D11Device* pDevice)
 		}
 	}
 
-	m_btn[0].SetScale(200, 100, 100);
+	m_btn[0].SetScale(100, 100, 1);
 	m_btn[0].SetAlign(ALIGNMENT_LEFT);
-	m_btn[0].UpdateWorldMatrix(SCREEN_WIDTH, SCREEN_HEIGHT);
+	m_btn[0].UpdateWorldMatrix();
 
-	m_btn[1].SetScale(100, 100, 100);
+	m_btn[1].SetScale(100, 100, 1);
 	m_btn[1].SetAlign(ALIGNMENT_RIGHT);
-	m_btn[1].UpdateWorldMatrix(SCREEN_WIDTH, SCREEN_HEIGHT);
+	m_btn[1].UpdateWorldMatrix();
 
-	m_btn[2].SetScale(100, 200, 100);
+	m_btn[2].SetScale(100, 200, 1);
 	m_btn[2].SetAlign(ALIGNMENT_TOP);
-	m_btn[2].UpdateWorldMatrix(SCREEN_WIDTH, SCREEN_HEIGHT);
+	m_btn[2].UpdateWorldMatrix();
 
-	m_btn[3].SetScale(100, 100, 100);
+	m_btn[3].SetScale(100, 100, 1);
 	m_btn[3].SetAlign(ALIGNMENT_BOTTOM);
-	m_btn[3].UpdateWorldMatrix(SCREEN_WIDTH, SCREEN_HEIGHT);
+	m_btn[3].UpdateWorldMatrix();
 
 	m_plane = new Plane;
 	if (!m_plane)
@@ -74,29 +81,37 @@ bool TestCanvas::Initialize(ID3D11Device* pDevice)
 		return false;
 	}
 
-	m_plane->SetScale(500, 500, 500);
-	m_plane->UpdateWorldMatrix(SCREEN_WIDTH, SCREEN_HEIGHT);
+	m_plane->SetScale(500, 500, 1);
+	m_plane->UpdateWorldMatrix();
+
+	m_textField = new TextField;
+	if (!m_textField)
+	{
+		return false;
+	}
+
+	result = m_textField->Initialize(pDevice, L"..//data//assets//panel-header-1.png", L"..//data//assets//panel-header-2.png");
+	if (FAILED(result))
+	{
+		return false;
+	}
+
+	m_textField->SetScale(300, 100, 1);
+	m_textField->SetAlign(ALIGNMENT_RIGHT_BOTTOM);
+	m_textField->SetLocalPosition(-100, 100, 0);
+	m_textField->UpdateWorldMatrix();
 
 	return true;
 }
 
-void TestCanvas::Frame(D3DClass* pD3DClass, HWND hwnd, ShaderManager* pShaderManager, TextClass* pTextClass, CameraClass* pCameraClass, InputClass* pInputClass)
+void TestCanvas::Frame(D3DClass* pD3DClass, HWND hwnd, ShaderManager* pShaderManager, TextClass* pTextClass, CameraClass* pCameraClass)
 {
 	bool state;
 	
-	POINT mpos;
-	RECT rect;
-	XMFLOAT2 npos;
+	float mouseX, mouseY;//정규화 마우스 좌표
 
-	GetCursorPos(&mpos);
-	ScreenToClient(hwnd, &mpos);
-	GetClientRect(hwnd, &rect);
-
-	npos = XMFLOAT2(
-		((2.0f * static_cast<float>(mpos.x)) / static_cast<float>(rect.right - rect.left)) - 1.0f,
-		((-2.0f * static_cast<float>(mpos.y)) / static_cast<float>(rect.bottom - rect.top) + 1.0f)
-	);//마우스 위치를 정규화
-
+	InputClass::GetInstance().GetNormalizedMousePosition(mouseX, mouseY);
+	
 	XMMATRIX view, proj;
 
 	pCameraClass->GetBaseViewMatrix(view);
@@ -104,8 +119,10 @@ void TestCanvas::Frame(D3DClass* pD3DClass, HWND hwnd, ShaderManager* pShaderMan
 
 	for (int i = 0; i < 4; i++)
 	{
-		m_btn[i].Frame(pInputClass, view, proj, npos.x, npos.y);
+		m_btn[i].Frame(view, proj, mouseX, mouseY);
 	}
+
+	m_textField->Frame(view, proj, mouseX, mouseY);
 
 
 	state = m_btn[0].IsPressed();
@@ -136,12 +153,12 @@ void TestCanvas::Frame(D3DClass* pD3DClass, HWND hwnd, ShaderManager* pShaderMan
 		MessageBox(hwnd, L"하단 버튼 눌림", L"Check", MB_OK);
 	}
 
-	Render(pD3DClass, pShaderManager, view, proj);
+	Render(pD3DClass, pTextClass, pShaderManager, view, proj);
 	
 	return;
 }
 
-bool TestCanvas::Render(D3DClass* pD3DClass,ShaderManager* pShaderManager, const XMMATRIX& view, const XMMATRIX& proj)
+bool TestCanvas::Render(D3DClass* pD3DClass,TextClass* pTextClass, ShaderManager* pShaderManager, const XMMATRIX& view, const XMMATRIX& proj)
 {
 	bool result;
 
@@ -158,6 +175,12 @@ bool TestCanvas::Render(D3DClass* pD3DClass,ShaderManager* pShaderManager, const
 		{
 			return false;
 		}
+	}
+
+	result = m_textField->Render(pD3DClass->GetDeviceContext(), pTextClass, pShaderManager->GetUIShader(), m_textField->GetWorldMatrix(), view, proj);
+	if (!result)
+	{
+		return false;
 	}
 
 	return true;

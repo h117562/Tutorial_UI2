@@ -84,6 +84,9 @@
     <ClCompile Include="Plane.h">
       <Filter>UI\Elements</Filter>
     </ClCompile>
+    <ClCompile Include="Global.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FrameTimer.h">
@@ -131,7 +134,7 @@
     <ClInclude Include="Slider.h">
       <Filter>UI\Elements</Filter>
     </ClInclude>
-    <ClInclude Include="Textfield.h">
+    <ClInclude Include="TextField.h">
       <Filter>UI\Elements</Filter>
     </ClInclude>
     <ClInclude Include="RectTransform.h">

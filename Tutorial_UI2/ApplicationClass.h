@@ -19,11 +19,11 @@ public:
 
 	bool Initialize(HWND);
 	void Shutdown();
-	bool Frame(HWND, InputClass*, FrameTimer*);
+	bool Frame(HWND, FrameTimer*);
 
 private:
-	void HandleInput(InputClass*, FrameTimer*);
-	void Render(HWND, InputClass*);
+	void HandleInput(FrameTimer*);
+	void Render(HWND);
 
 private:
 	D3DClass* m_Direct3D;

@@ -132,12 +132,12 @@ void ApplicationClass::Shutdown()
 	return;
 }
 
-bool ApplicationClass::Frame(HWND hwnd, InputClass* pInputClass, FrameTimer* pFrameTimer)
+bool ApplicationClass::Frame(HWND hwnd, FrameTimer* pFrameTimer)
 {
 	bool result;
 
 	//사용자 입력 처리
-	HandleInput(pInputClass, pFrameTimer);
+	HandleInput(pFrameTimer);
 
 	//카메라 업데이트
 	m_CameraClass->Render();
@@ -149,10 +149,10 @@ bool ApplicationClass::Frame(HWND hwnd, InputClass* pInputClass, FrameTimer* pFr
 	m_TextClass->BeginDraw();
 
 	//그래픽 렌더링
-	Render(hwnd, pInputClass);
+	Render(hwnd);
 
 	//UI 렌더링
-	m_uiManager->Frame(m_Direct3D, hwnd, m_ShaderManager, m_TextClass, m_CameraClass, pInputClass);
+	m_uiManager->Frame(m_Direct3D, hwnd, m_ShaderManager, m_TextClass, m_CameraClass);
 
 	m_TextClass->EndDraw();
 	m_Direct3D->EndScene();
@@ -160,7 +160,7 @@ bool ApplicationClass::Frame(HWND hwnd, InputClass* pInputClass, FrameTimer* pFr
 	return true;
 }
 
-void ApplicationClass::HandleInput(InputClass* pInputClass, FrameTimer* pFrameTimer)
+void ApplicationClass::HandleInput(FrameTimer* pFrameTimer)
 {
 	bool state;
 	float deltaX, deltaY, frameTime;
@@ -168,38 +168,38 @@ void ApplicationClass::HandleInput(InputClass* pInputClass, FrameTimer* pFrameTi
 	frameTime = pFrameTimer->GetTime();
 	m_CameraClass->SetFrameTime(frameTime);
 
-	state = pInputClass->GetKeyPressed(DIK_A);
+	state = InputClass::GetInstance().GetKeyPressed(DIK_A);
 	m_CameraClass->MoveLeft(state);
 
-	state = pInputClass->GetKeyPressed(DIK_S);
+	state = InputClass::GetInstance().GetKeyPressed(DIK_S);
 	m_CameraClass->MoveBackward(state);
 
-	state = pInputClass->GetKeyPressed(DIK_D);
+	state = InputClass::GetInstance().GetKeyPressed(DIK_D);
 	m_CameraClass->MoveRight(state);
 
-	state = pInputClass->GetKeyPressed(DIK_W);
+	state = InputClass::GetInstance().GetKeyPressed(DIK_W);
 	m_CameraClass->MoveForward(state);
 
-	pInputClass->GetMouseDelta(deltaX, deltaY);
+	InputClass::GetInstance().GetMouseDelta(deltaX, deltaY);
 	m_CameraClass->UpdateRotation(deltaX, deltaY);
 
-	state = pInputClass->GetKeyPressedAndRelease(DIK_F5);
+	state = InputClass::GetInstance().GetKeyPressedAndRelease(DIK_F5);
 	if (state)
 	{
-		EventClass::GetInstance().Publish(UI_EVENT::EVENT_TOGGLE_DEBUG_MODE);
+		EventClass::GetInstance().Publish(UI_EVENT::TOGGLE_DEBUG_MODE);
 	}
 
-	state = pInputClass->GetKeyPressedAndRelease(DIK_F6);
+	state = InputClass::GetInstance().GetKeyPressedAndRelease(DIK_F6);
 	if (state)
 	{
-		EventClass::GetInstance().Publish(UI_EVENT::EVENT_TOGGLE_TEST_CANVAS);
+		EventClass::GetInstance().Publish(UI_EVENT::TOGGLE_TEST_CANVAS);
 	}
 
 	return;
 }
 
 
-void ApplicationClass::Render(HWND hwnd, InputClass* pInputClass)
+void ApplicationClass::Render(HWND hwnd)
 {
 	return;
 }

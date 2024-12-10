@@ -18,7 +18,7 @@ public:
 	DebugInfo(const DebugInfo&);
 
 	bool Initialize(D3DClass*);
-	void Frame(TextClass*, CameraClass*, InputClass*);
+	void Frame(TextClass*, CameraClass*);
 	void Render(TextClass*);
 
 	void ToggleActive();
@@ -43,7 +43,7 @@ private:
 	long m_prevMX, m_prevMY;
 	wchar_t m_stringPX[16], m_stringPY[16], m_stringPZ[16];
 	wchar_t m_stringRX[16], m_stringRY[16], m_stringRZ[16];
-	wchar_t m_stringMX[16], m_stringMY[16];
+	wchar_t m_stringMX[30], m_stringMY[30];
 };
 
 #endif

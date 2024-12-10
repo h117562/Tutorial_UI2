@@ -3,7 +3,6 @@
 SystemClass::SystemClass()
 {
 	m_applicationClass = 0;
-	m_inputClass = 0;
 	m_frameTimer = 0;
 }
 
@@ -29,6 +28,16 @@ bool SystemClass::Initialize()
 		return false;
 	}
 
+	//EventClass 초기화
+	EventClass::GetInstance();
+
+	//InputClass 초기화
+	result = InputClass::GetInstance().Initialize(m_hinstance, m_hwnd);
+	if (!result)
+	{
+		return false;
+	}
+
 	//FrameTimer 생성
 	m_frameTimer = new FrameTimer();
 	if (!m_frameTimer)
@@ -38,20 +47,6 @@ bool SystemClass::Initialize()
 
 	//FrameTimer 초기화
 	result = m_frameTimer->Initialize();
-	if (!result)
-	{
-		return false;
-	}
-
-	//InputClass 생성
-	m_inputClass = new InputClass();
-	if (!m_inputClass)
-	{
-		return false;
-	}
-
-	//InputClass 초기화
-	result = m_inputClass->Initialize(m_hinstance, m_hwnd);
 	if (!result)
 	{
 		return false;
@@ -274,13 +269,6 @@ void SystemClass::Shutdown()
 		m_applicationClass = 0;
 	}
 
-	if (m_inputClass)
-	{
-		m_inputClass->Shutdown();
-		delete m_inputClass;
-		m_inputClass = 0;
-	}
-
 	if (m_frameTimer)
 	{
 		delete m_frameTimer;
@@ -348,13 +336,13 @@ bool SystemClass::Frame()
 
 	m_frameTimer->Frame();
 
-	result = m_inputClass->Frame();
+	result = InputClass::GetInstance().Frame();
 	if (!result)
 	{
 		return false;
 	}
 
-	result = m_applicationClass->Frame(m_hwnd, m_inputClass, m_frameTimer);
+	result = m_applicationClass->Frame(m_hwnd, m_frameTimer);
 	if (!result)
 	{
 		return false;
@@ -391,15 +379,15 @@ bool SystemClass::SearchOptions(string target, const char* str)
 
 LRESULT CALLBACK SystemClass::MessageHandler(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
-	
-	//if (m_inputClass->GetTextInputFocus())
-	//{
-	//	if (msg == WM_CHAR)
-	//	{
-	//		//글자가 입력될 때 마다 inputClass의 배열변수에 밀어넣기
-	//		m_inputClass->AddTextInputData(static_cast<wchar_t>(wparam));
-	//	}
-	//}
+
+	if (InputClass::GetInstance().GetTextInputEnabled())
+	{
+		if (msg == WM_CHAR)
+		{
+			//글자가 입력될 때 마다 inputClass의 멤버 변수에 저장
+			InputClass::GetInstance().AddText(static_cast<wchar_t>(wparam));
+		}
+	}
 
 	return DefWindowProc(hwnd, msg, wparam, lparam);
 }

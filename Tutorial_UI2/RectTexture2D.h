@@ -122,7 +122,7 @@ protected://상속 받은 클래스에서만 사용가능하게
 		return S_OK;
 	}
 
-	virtual HRESULT SetTexture(ID3D11Device* pDevice, const wchar_t* filePath[], const unsigned int count)
+	virtual HRESULT SetTexture(ID3D11Device* pDevice, const wchar_t* filePath[], const unsigned int& count)
 	{
 		HRESULT result;
 
@@ -141,7 +141,7 @@ protected://상속 받은 클래스에서만 사용가능하게
 		return result;
 	}
 
-	virtual void Draw(ID3D11DeviceContext* pDeviceContext, const unsigned int flag)
+	virtual void Draw(ID3D11DeviceContext* pDeviceContext, const unsigned int& flag)
 	{
 		ID3D11ShaderResourceView* srv = nullptr;
 
@@ -160,8 +160,8 @@ protected://상속 받은 클래스에서만 사용가능하게
 		const DirectX::XMMATRIX& world,
 		const DirectX::XMMATRIX& view,
 		const DirectX::XMMATRIX& projection,
-		const float mouseX,
-		const float mouseY) final
+		const float& mouseX,
+		const float& mouseY) final
 	{
 		bool result = false;
 		float dist = 0.0f;//충돌 거리
@@ -199,8 +199,8 @@ private:
 		const DirectX::XMMATRIX& w,
 		const DirectX::XMMATRIX& v,
 		const DirectX::XMMATRIX& p,
-		const float mouseX,
-		const float mouseY, 
+		const float& mouseX,
+		const float& mouseY, 
 		DirectX::XMVECTOR& origin)
 	{
 		DirectX::XMMATRIX inverseWorld, inverseViewProjection;

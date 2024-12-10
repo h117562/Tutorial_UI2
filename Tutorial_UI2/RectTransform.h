@@ -3,6 +3,8 @@
 
 #include <DirectXMath.h>
 
+#include "Global.h"
+
 enum ALIGNMENT//정렬 플래그
 {
 	ALIGNMENT_CENTER,//정중앙
@@ -22,12 +24,14 @@ protected:
 	RectTransform()
 	{
 		//기본 설정 데이터
-		m_position = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
+		m_localPosition = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
+		m_worldPosition = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
 		m_rotation = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
 		m_scale = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
-		m_margin = DirectX::XMFLOAT2(0.0f, 0.0f);
 		m_align = ALIGNMENT_CENTER;
 		m_worldMatrix = DirectX::XMMatrixIdentity();
+		m_screenX = 0;
+		m_screenY = 0;
 	}
 
 	virtual ~RectTransform()
@@ -36,19 +40,25 @@ protected:
 
 public:
 	//월드 행렬 초기화
-	virtual void UpdateWorldMatrix(const unsigned int& screenWidth, const unsigned int& screenHeight)
+	virtual void UpdateWorldMatrix()
 	{
 		DirectX::XMMATRIX pos, rot, scale;
 
 		m_worldMatrix = DirectX::XMMatrixIdentity();
 		
-		pos = Alignment(screenWidth, screenHeight, m_align);
+		pos = Alignment(SCREEN_WIDTH, SCREEN_HEIGHT, m_align);
 		rot = DirectX::XMMatrixRotationRollPitchYaw(m_rotation.x, m_rotation.y, m_rotation.z);
 		scale = DirectX::XMMatrixScaling(m_scale.x, m_scale.y, m_scale.z);
 
 		m_worldMatrix = DirectX::XMMatrixMultiply(m_worldMatrix, pos);
 		m_worldMatrix = DirectX::XMMatrixMultiply(m_worldMatrix, scale);
 		m_worldMatrix = DirectX::XMMatrixMultiply(m_worldMatrix, rot);
+
+		//스크린 좌표도 업데이트
+		m_screenX = m_worldPosition.x * m_scale.x;
+		m_screenY = m_worldPosition.y * -m_scale.y;
+
+		return;
 	}
 
 	//월드 행렬 가져오기
@@ -57,41 +67,40 @@ public:
 		return m_worldMatrix;
 	}
 
-	//위치 설정
-	virtual void SetPosition(float x, float y, float z)
+	//상대 위치 설정
+	virtual void SetLocalPosition(const float& x, const float& y, const float& z)
 	{
-		m_position = DirectX::XMFLOAT3(x, y, z);
+		m_localPosition = DirectX::XMFLOAT3(x, y, z);
 	}
 
 	//회전 설정
-	virtual void SetRotation(float x, float y, float z)
+	virtual void SetRotation(const float& x, const float& y, const float& z)
 	{
 		m_rotation = DirectX::XMFLOAT3(x, y, z);
 	}
 
 	//크기 설정
-	virtual void SetScale(float x, float y, float z)
+	virtual void SetScale(const float& x, const float& y, const float& z)
 	{
 		m_scale = DirectX::XMFLOAT3(x, y, z);
 	}
 
-
-	//여백 설정
-	virtual void SetMargin(float x, float y)
-	{
-		m_margin = DirectX::XMFLOAT2(x, y);
-	}
-
 	//정렬 설정
-	virtual void SetAlign(unsigned int flag)
+	virtual void SetAlign(const unsigned int& flag)
 	{
 		m_align = flag;
 	}
 
-	//위치 얻기
-	virtual DirectX::XMFLOAT3 GetPosition()
+	//상대 위치 얻기
+	virtual DirectX::XMFLOAT3 GetLocalPosition()
 	{
-		return m_position;
+		return m_localPosition;
+	}
+
+	//절대 위치 얻기
+	virtual DirectX::XMFLOAT3 GetWorldPosition()
+	{
+		return m_worldPosition;
 	}
 
 	//회전 얻기
@@ -106,20 +115,22 @@ public:
 		return m_scale;
 	}
 
-	//여백 얻기
-	virtual DirectX::XMFLOAT2 GetMargin()
-	{
-		return m_margin;
-	}
-
 	//정렬 얻기
 	virtual unsigned int GetAlign()
 	{
 		return m_align;
 	}
 
+	//스크린 좌표 얻기
+	virtual void GetScreenPos(float& x, float& y)
+	{
+		x = m_screenX;
+		y = m_screenY;
+		return;
+	}
+
 private:
-	virtual DirectX::XMMATRIX Alignment(const unsigned int& screenWidth, const unsigned int& screenHeight, unsigned int flag)
+	virtual DirectX::XMMATRIX Alignment(const unsigned int& screenWidth, const unsigned int& screenHeight, const unsigned int& flag)
 	{
 		DirectX::XMMATRIX mat;
 		float x, y;
@@ -127,45 +138,76 @@ private:
 		switch (flag)
 		{
 		case ALIGNMENT_CENTER://정중앙
-			mat = DirectX::XMMatrixTranslation(m_position.x, m_position.y, m_position.z);
+			//상대좌표가 곧 절대좌표
+			m_worldPosition = DirectX::XMFLOAT3(m_localPosition.x / m_scale.x, m_localPosition.y / m_scale.y, m_localPosition.z / m_scale.z);
+			mat = DirectX::XMMatrixTranslation(m_worldPosition.x, m_worldPosition.y, m_worldPosition.z);
 			break;
 		case ALIGNMENT_LEFT://좌측 중앙
-			x = (float)screenWidth / (m_scale.x * 2.0f) - 0.5f + m_margin.x;
-			mat = DirectX::XMMatrixTranslation(-x + m_position.x, m_position.y, m_position.z);
+			x = CalculateElementPosition(screenWidth, m_scale.x);
+			m_worldPosition = DirectX::XMFLOAT3(-x + (m_localPosition.x / m_scale.x), (m_localPosition.y / m_scale.y), (m_localPosition.z / m_scale.z));
+			mat = DirectX::XMMatrixTranslation(m_worldPosition.x, m_worldPosition.y, m_worldPosition.z);
 			break;
 		case ALIGNMENT_RIGHT://우측 중앙
-			x = (float)screenWidth / (m_scale.x * 2.0f) - 0.5f + m_margin.x;
-			mat = DirectX::XMMatrixTranslation(x + m_position.x, m_position.y, m_position.z);
+			x = CalculateElementPosition(screenWidth, m_scale.x);
+			m_worldPosition = DirectX::XMFLOAT3(x + (m_localPosition.x / m_scale.x), (m_localPosition.y / m_scale.y), (m_localPosition.z / m_scale.z));
+			mat = DirectX::XMMatrixTranslation(m_worldPosition.x, m_worldPosition.y, m_worldPosition.z);
 			break;
 		case ALIGNMENT_TOP://상단 중앙
-			y = (float)screenHeight / (m_scale.y * 2.0f) - 0.5f + m_margin.y;
-			mat = DirectX::XMMatrixTranslation(m_position.x, y + m_position.y, m_position.z);
+			y = CalculateElementPosition(screenHeight, m_scale.y);
+			m_worldPosition = DirectX::XMFLOAT3((m_localPosition.x / m_scale.x), y + (m_localPosition.y / m_scale.y), (m_localPosition.z / m_scale.z));
+			mat = DirectX::XMMatrixTranslation(m_worldPosition.x, m_worldPosition.y, m_worldPosition.z);
 			break;
 		case ALIGNMENT_BOTTOM://하단 중앙
-			y = (float)screenHeight / (m_scale.y * 2.0f) - 0.5f + m_margin.y;
-			mat = DirectX::XMMatrixTranslation(m_position.x, -y + m_position.y, m_position.z);
+			y = CalculateElementPosition(screenHeight, m_scale.y);
+			m_worldPosition = DirectX::XMFLOAT3((m_localPosition.x / m_scale.x), -y + (m_localPosition.y / m_scale.y), (m_localPosition.z / m_scale.z));
+			mat = DirectX::XMMatrixTranslation(m_worldPosition.x, m_worldPosition.y, m_worldPosition.z);
 			break;
-
-			//ALIGNMENT_LEFT_TOP,//좌상단
-			//ALIGNMENT_LEFT_BOTTOM,//좌하단
-			//ALIGNMENT_RIGHT_TOP,//우상단
-			//ALIGNMENT_RIGHT_BOTTOM,//우하단
-
+		case ALIGNMENT_LEFT_TOP://좌상단
+			x = CalculateElementPosition(screenWidth, m_scale.x);
+			y = CalculateElementPosition(screenHeight, m_scale.y);
+			m_worldPosition = DirectX::XMFLOAT3(-x + (m_localPosition.x / m_scale.x), y + (m_localPosition.y / m_scale.y), (m_localPosition.z / m_scale.z));
+			mat = DirectX::XMMatrixTranslation(m_worldPosition.x, m_worldPosition.y, m_worldPosition.z);
+			break;
+		case ALIGNMENT_LEFT_BOTTOM://좌하단
+			x = CalculateElementPosition(screenWidth, m_scale.x);
+			y = CalculateElementPosition(screenHeight, m_scale.y);
+			m_worldPosition = DirectX::XMFLOAT3(-x + (m_localPosition.x / m_scale.x), -y + (m_localPosition.y / m_scale.y), (m_localPosition.z / m_scale.z));
+			mat = DirectX::XMMatrixTranslation(m_worldPosition.x, m_worldPosition.y, m_worldPosition.z);
+			break;
+		case ALIGNMENT_RIGHT_TOP://우상단
+			x = CalculateElementPosition(screenWidth, m_scale.x);
+			y = CalculateElementPosition(screenHeight, m_scale.y);
+			m_worldPosition = DirectX::XMFLOAT3(x + (m_localPosition.x / m_scale.x), y + (m_localPosition.y / m_scale.y), (m_localPosition.z / m_scale.z));
+			mat = DirectX::XMMatrixTranslation(m_worldPosition.x, m_worldPosition.y, m_worldPosition.z);
+			break;
+		case ALIGNMENT_RIGHT_BOTTOM://우하단
+			x = CalculateElementPosition(screenWidth, m_scale.x);
+			y = CalculateElementPosition(screenHeight, m_scale.y);
+			m_worldPosition = DirectX::XMFLOAT3(x + (m_localPosition.x / m_scale.x), -y + (m_localPosition.y / m_scale.y), (m_localPosition.z / m_scale.z));
+			mat = DirectX::XMMatrixTranslation(m_worldPosition.x, m_worldPosition.y, m_worldPosition.z);
+			break;
 		default://ALIGNMENT_CENTER
-			mat = DirectX::XMMatrixTranslation(m_position.x, m_position.y, m_position.z);
-			break;
+			//상대좌표가 곧 절대좌표
+			m_worldPosition = DirectX::XMFLOAT3(m_localPosition.x / m_scale.x, m_localPosition.y / m_scale.y, m_localPosition.z / m_scale.z);
+			mat = DirectX::XMMatrixTranslation(m_worldPosition.x, m_worldPosition.y, m_worldPosition.z);
 		}
 
 		return mat;
 	}
 
+	virtual float CalculateElementPosition(const unsigned int& resolution, const float& scale)
+	{
+		return static_cast<float>(resolution) / (scale * 2.0f) - 0.5f;
+	}
+
 private:
 	DirectX::XMMATRIX m_worldMatrix;
-	DirectX::XMFLOAT3 m_position;
+	DirectX::XMFLOAT3 m_localPosition;
+	DirectX::XMFLOAT3 m_worldPosition;
 	DirectX::XMFLOAT3 m_rotation;
 	DirectX::XMFLOAT3 m_scale;
-	DirectX::XMFLOAT2 m_margin;
 	unsigned int m_align;
+	float m_screenX, m_screenY;
 };
 
 #endif

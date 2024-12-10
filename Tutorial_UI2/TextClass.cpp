@@ -114,13 +114,13 @@ bool TextClass::Initialize(IDXGISwapChain* pSwapChain)
 }
 
 //텍스트 렌더링 기본 폰트, 컬러
-void TextClass::RenderText(const wchar_t* ptext, float x, float y, float width, float height)
+void TextClass::RenderText(const wchar_t* ptext, const float& x, const float& y, const float& width, const float& height)
 {
 	m_renderTarget->DrawTextW(
 		ptext,
 		wcslen(ptext),
 		m_defaultFormat,
-		D2D1::RectF(x, y, width, height),
+		D2D1::RectF(x, y, x + width, y + height), 
 		m_defaultBrush,
 		D2D1_DRAW_TEXT_OPTIONS_NONE,
 		DWRITE_MEASURING_MODE_NATURAL
@@ -128,13 +128,13 @@ void TextClass::RenderText(const wchar_t* ptext, float x, float y, float width, 
 }
 
 //텍스트 렌더링 지정 폰트, 컬러
-void TextClass::RenderText(const wchar_t* ptext, float x, float y, float width, float height, IDWriteTextFormat* pformat, ID2D1SolidColorBrush* pbrush)
+void TextClass::RenderText(const wchar_t* ptext, const float& x, const float& y, const float& width, const float& height, IDWriteTextFormat* pformat, ID2D1SolidColorBrush* pbrush)
 {
 	m_renderTarget->DrawTextW(
 		ptext,
 		wcslen(ptext),
 		pformat,
-		D2D1::RectF(x, y, width, height),
+		D2D1::RectF(x, y, x + width, y + height),
 		pbrush,
 		D2D1_DRAW_TEXT_OPTIONS_NONE,
 		DWRITE_MEASURING_MODE_NATURAL

@@ -136,6 +136,7 @@
     <ClCompile Include="D3DClass.cpp" />
     <ClCompile Include="DebugInfo.cpp" />
     <ClCompile Include="FrameTimer.cpp" />
+    <ClCompile Include="Global.cpp" />
     <ClCompile Include="InputClass.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Plane.h" />
@@ -164,7 +165,7 @@
     <ClInclude Include="SystemClass.h" />
     <ClInclude Include="TestCanvas.h" />
     <ClInclude Include="TextClass.h" />
-    <ClInclude Include="Textfield.h" />
+    <ClInclude Include="TextField.h" />
     <ClInclude Include="TextureResource.h" />
     <ClInclude Include="UIShaderClass.h" />
     <ClInclude Include="UIManager.h" />

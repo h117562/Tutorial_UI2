@@ -11,10 +11,7 @@
 #include "Button.h"
 #include "Plane.h"
 #include "Slider.h"
-#include "Textfield.h"
-
-extern unsigned int SCREEN_WIDTH;	//윈도우 너비
-extern unsigned int SCREEN_HEIGHT;	//윈도우 높이
+#include "TextField.h"
 
 class TestCanvas
 {
@@ -23,8 +20,8 @@ public:
 	~TestCanvas();
 
 	bool Initialize(ID3D11Device*);
-	void Frame(D3DClass*, HWND, ShaderManager*, TextClass*, CameraClass*, InputClass*);
-	bool Render(D3DClass*, ShaderManager*, const XMMATRIX&, const XMMATRIX&);
+	void Frame(D3DClass*, HWND, ShaderManager*, TextClass*, CameraClass*);
+	bool Render(D3DClass*, TextClass*, ShaderManager*, const XMMATRIX&, const XMMATRIX&);
 	void ToggleActive();
 	void SetActive(bool state);
 	bool GetActive();
@@ -32,6 +29,7 @@ public:
 private:
 	Button* m_btn;
 	Plane* m_plane;
+	TextField* m_textField;
 
 	bool m_active;
 };

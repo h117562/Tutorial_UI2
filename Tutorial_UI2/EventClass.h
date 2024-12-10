@@ -8,23 +8,15 @@
 
 enum struct UI_EVENT
 {
-	EVENT_DEFAULT,
-	EVENT_TOGGLE_DEBUG_MODE,
-	EVENT_TOGGLE_TEST_CANVAS,
+	DEFAULT,
+	TOGGLE_DEBUG_MODE,
+	TOGGLE_TEST_CANVAS,
 	EVENT_COUNT,//이벤트 개수 //[]배열 크기 할당하기 위함
-};
-
-enum struct INPUT_EVNET
-{
-	EVENT_DEFAULT,
-	MOUSE_LEFT_PRESSED,
-	MOUSE_LEFT_RELEASED,
-	EVENT_COUNT,//이벤트 개수
 };
 
 enum struct SCENE_EVENT
 {
-	EVENT_DEFAULT,
+	DEFAULT,
 	EVENT_COUNT,//이벤트 개수
 };
 
@@ -37,12 +29,23 @@ public:
 
 		return instance;
 	}
-	
-	//복사 생성자랑 대입 연산 방지
+
+	//복사 생성자랑 대입 연산 제거
 	EventClass(const EventClass&) = delete;
 	void operator=(const EventClass&) = delete;
 
+private:
+	//생성자를 private에 두어 객체 생성 방지
+	EventClass()
+	{
+	}
+
+	~EventClass()
+	{
+	}
+
 public:
+
 	//이벤트 발생 시, 실행할 함수를 함수 포인터 배열에 등록하는 함수
 	void Subscribe(UI_EVENT event, std::function<void()> func)
 	{
@@ -59,18 +62,7 @@ public:
 	}
 
 private:
-	//생성자를 private에 두어 객체 생성 방지
-	EventClass()
-	{
-	}
-
-	~EventClass()
-	{
-	}
-
-private:
 	std::vector<std::function<void()>> m_uiEvents[TO_INT(UI_EVENT::EVENT_COUNT)];
-	std::vector<std::function<void()>> m_inputEvents[TO_INT(INPUT_EVNET::EVENT_COUNT)];
 	std::vector<std::function<void()>> m_sceneEvents[TO_INT(SCENE_EVENT::EVENT_COUNT)];
 };
 

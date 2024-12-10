@@ -23,7 +23,7 @@ bool UIManager::Initialize(D3DClass* pD3Dclass)
 		return false;
 	}
 
-	EventClass::GetInstance().Subscribe(UI_EVENT::EVENT_TOGGLE_DEBUG_MODE, [&]() {m_debugUI.ToggleActive(); });
+	EventClass::GetInstance().Subscribe(UI_EVENT::TOGGLE_DEBUG_MODE, [&]() {m_debugUI.ToggleActive(); });
 
 	result = m_canvas.Initialize(pD3Dclass->GetDevice());
 	if (!result)
@@ -31,13 +31,13 @@ bool UIManager::Initialize(D3DClass* pD3Dclass)
 		return false;
 	}
 
-	EventClass::GetInstance().Subscribe(UI_EVENT::EVENT_TOGGLE_TEST_CANVAS, [&]() {m_canvas.ToggleActive(); });
+	EventClass::GetInstance().Subscribe(UI_EVENT::TOGGLE_TEST_CANVAS, [&]() {m_canvas.ToggleActive(); });
 
 	return true;
 }
 
 
-bool UIManager::Frame(D3DClass* pD3DClass, HWND hwnd, ShaderManager* pShaderManager, TextClass* pTextClass, CameraClass* pCameraClass, InputClass* pInputClass)
+bool UIManager::Frame(D3DClass* pD3DClass, HWND hwnd, ShaderManager* pShaderManager, TextClass* pTextClass, CameraClass* pCameraClass)
 {
 	bool result, state;
 
@@ -45,12 +45,12 @@ bool UIManager::Frame(D3DClass* pD3DClass, HWND hwnd, ShaderManager* pShaderMana
 
 	if (m_debugUI.GetActive())
 	{
-		m_debugUI.Frame(pTextClass, pCameraClass, pInputClass);
+		m_debugUI.Frame(pTextClass, pCameraClass);
 	}
 
 	if (m_canvas.GetActive())
 	{
-		m_canvas.Frame(pD3DClass, hwnd, pShaderManager, pTextClass, pCameraClass, pInputClass);
+		m_canvas.Frame(pD3DClass, hwnd, pShaderManager, pTextClass, pCameraClass);
 	}
 
 	pD3DClass->TurnZBufferOn();

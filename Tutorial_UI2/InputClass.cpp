@@ -6,19 +6,41 @@ InputClass::InputClass()
 	m_keyboardDevice = 0;
 	m_mouseDevice = 0;
 	m_sensitivity = 0.1f;
+	m_textInputEnabled = false;
 }
 
 InputClass::~InputClass()
 {
-}
 
-InputClass::InputClass(const InputClass& other)
-{
+	//마우스 DirectDevice 해제
+	if (m_mouseDevice)
+	{
+		m_mouseDevice->Unacquire();
+		m_mouseDevice->Release();
+		m_mouseDevice = NULL;
+	}
+
+	//키보드 DirectDevice 해제
+	if (m_keyboardDevice)
+	{
+		m_keyboardDevice->Unacquire();
+		m_keyboardDevice->Release();
+		m_keyboardDevice = NULL;
+	}
+
+	//DirectInput 해제
+	if (m_directInput)
+	{
+		m_directInput->Release();
+		m_directInput = NULL;
+	}
 }
 
 bool InputClass::Initialize(HINSTANCE hInstance, HWND hwnd)
 {
 	HRESULT result;
+
+	m_hwnd = hwnd;
 
 	//DirectInput 생성
 	result = DirectInput8Create(hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&m_directInput, nullptr);
@@ -107,39 +129,14 @@ bool InputClass::Frame()
 	return true;
 }
 
-void InputClass::Shutdown()
-{
-	//마우스 DirectDevice 해제
-	if (m_mouseDevice)
-	{
-		m_mouseDevice->Unacquire();
-		m_mouseDevice->Release();
-		m_mouseDevice = NULL;
-	}
-
-	//키보드 DirectDevice 해제
-	if (m_keyboardDevice)
-	{
-		m_keyboardDevice->Unacquire();
-		m_keyboardDevice->Release();
-		m_keyboardDevice = NULL;
-	}
-
-	//DirectInput 해제
-	if (m_directInput)
-	{
-		m_directInput->Release();
-		m_directInput = NULL;
-	}
-
-	return;
-}
-
 bool InputClass::ReadKeyboard()
 {
 	HRESULT result;
 
-	//키보드 장치의 상태를 가져옴
+	//이전 키 상태를 현재 상태로 덮어쓰기
+	memcpy(m_prevKeyState, m_currKeyState, 256);
+
+	//현재 키보드 장치의 상태를 가져옴
 	result = m_keyboardDevice->GetDeviceState(sizeof(m_currKeyState), (LPVOID)&m_currKeyState);
 	if (FAILED(result))
 	{
@@ -161,6 +158,9 @@ bool InputClass::ReadMouse()
 {
 	HRESULT result;
 
+	//이전 마우스 버튼 상태를 현재 상태로 덮어쓰기
+	memcpy(m_prevMouseState, m_mouseState.rgbButtons, 8);
+
 	//마우스 장치의 상태를 가져옴
 	result = m_mouseDevice->GetDeviceState(sizeof(DIMOUSESTATE2), (LPVOID)&m_mouseState);
 	if (FAILED(result))
@@ -180,7 +180,7 @@ bool InputClass::ReadMouse()
 	return true;
 }
 
-//마우스의 좌표를 얻는 함수
+//전체화면 기준 마우스의 좌표를 얻는 함수
 void InputClass::GetMousePosition(long& posX, long& posY)
 {
 	POINT pos;
@@ -193,9 +193,22 @@ void InputClass::GetMousePosition(long& posX, long& posY)
 	return;
 }
 
-//정규화된 마우스의 좌표를 얻는 함수
+//윈도우 위에서의 정규화된 마우스의 좌표를 얻는 함수
 void InputClass::GetNormalizedMousePosition(float& posX, float& posY)
 {
+	POINT pos;
+	RECT rect;
+
+	//전체화면 기준 좌표
+	GetCursorPos(&pos);
+
+	ScreenToClient(m_hwnd, &pos);
+	GetClientRect(m_hwnd, &rect);
+
+	//마우스 위치를 정규화
+	posX = ((2.0f * static_cast<float>(pos.x)) / static_cast<float>(rect.right - rect.left)) - 1.0f;
+	posY = ((-2.0f * static_cast<float>(pos.y)) / static_cast<float>(rect.bottom - rect.top)) + 1.0f;
+
 	return;
 }
 
@@ -222,17 +235,12 @@ bool InputClass::GetKeyPressed(const unsigned char keyCode)
 //키가 눌렸다가 땟을 때 true를 리턴하는 함수
 bool InputClass::GetKeyPressedAndRelease(const unsigned char keyCode)
 {
-	if (!KEYDOWN(m_currKeyState, keyCode))
+	if (KEYDOWN(m_prevKeyState, keyCode))
 	{
-		if (KEYDOWN(m_prevKeyState, keyCode))
+		if (!KEYDOWN(m_currKeyState, keyCode))
 		{
-			m_prevKeyState[keyCode] = 0x00;
 			return true;
 		}
-	}
-	else
-	{
-		m_prevKeyState[keyCode] = 0x80;
 	}
 
 	return false;
@@ -241,17 +249,12 @@ bool InputClass::GetKeyPressedAndRelease(const unsigned char keyCode)
 //키가 땟다가 눌렸을 때 true를 리턴하는 함수
 bool InputClass::GetKeyReleasedAndPress(const unsigned char keyCode)
 {
-	if (KEYDOWN(m_currKeyState, keyCode))
+	if (!KEYDOWN(m_prevKeyState, keyCode))
 	{
-		if (!KEYDOWN(m_prevKeyState, keyCode))
+		if (KEYDOWN(m_currKeyState, keyCode))
 		{
-			m_prevKeyState[keyCode] = 0x80;
 			return true;
 		}
-	}
-	else
-	{
-		m_prevKeyState[keyCode] = 0x00;
 	}
 
 	return false;
@@ -280,47 +283,37 @@ bool InputClass::GetLeftMouseButtonReleased()
 }
 
 //Press 상태에서 Release 상태로 전환 됐는지 확인하는 함수
-bool InputClass::GetLeftMouseButtonPressAndReleased()
+bool InputClass::GetLeftMouseButtonPressedAndReleased()
 {
-	if (!KEYDOWN(m_mouseState.rgbButtons, 0))
+	if (KEYDOWN(m_prevMouseState, 0))
 	{
-		if (m_prevMouseState[0])
+		if (!KEYDOWN(m_mouseState.rgbButtons, 0))
 		{
-			m_prevMouseState[0] = false;
 			return true;
 		}
-	}
-	else
-	{
-		m_prevMouseState[0] = true;
 	}
 
 	return false;
 }
 
 //Release 상태에서 Press 상태로 전환 됐는지 확인하는 함수
-bool InputClass::GetLeftMouseButtonReleaseAndPressed()
+bool InputClass::GetLeftMouseButtonReleasedAndPressed()
 {
-	if (KEYDOWN(m_mouseState.rgbButtons, 0))
+	if (!KEYDOWN(m_prevMouseState, 0))
 	{
-		if (!m_prevMouseState[0])
+		if (KEYDOWN(m_mouseState.rgbButtons, 0))
 		{
-			m_prevMouseState[0] = true;
 			return true;
 		}
-	}
-	else
-	{
-		m_prevMouseState[0] = false;
 	}
 
 	return false;
 }
 
 //마우스 오른쪽 버튼이 눌렸는지 체크하는 함수
-bool InputClass::GetRightMouseButtonDown()
+bool InputClass::GetRightMouseButtonPressed()
 {
-	if (m_mouseState.rgbButtons[1] & 0x80)
+	if (KEYDOWN(m_mouseState.rgbButtons, 1))
 	{
 		return true;
 	}
@@ -328,22 +321,48 @@ bool InputClass::GetRightMouseButtonDown()
 	return false;
 }
 
-
-//마우스 오른쪽 버튼이 눌렸다 떗는지 체크하는 함수
-bool InputClass::GetRightMouseButtonUp()
+//마우스 오른쪽 버튼이 눌렸는지 체크하는 함수
+bool InputClass::GetRightMouseButtonReleased()
 {
 	if (!KEYDOWN(m_mouseState.rgbButtons, 1))
 	{
-		if (m_prevMouseState[1])
-		{
-			m_prevMouseState[1] = false;
-			return true;
-		}
-	}
-	else
-	{
-		m_prevMouseState[1] = true;
+		return true;
 	}
 
 	return false;
+}
+
+bool InputClass::GetTextInputEnabled()
+{
+	return m_textInputEnabled;
+}
+
+void InputClass::SetTextInputEnabled(bool state)
+{
+	m_textInputEnabled = state;
+}
+
+void InputClass::AddText(const wchar_t text)
+{
+	if (wcslen(m_text) < 256)
+	{
+		wcscat_s(m_text, 256, &text);
+	}
+
+	return;
+}
+
+void InputClass::SetText(const wchar_t* text)
+{
+	if (wcslen(text) < 256)
+	{
+		wcscpy_s(m_text, text);
+	}
+
+	return;
+}
+
+const wchar_t* InputClass::GetText()
+{
+	return m_text;
 }

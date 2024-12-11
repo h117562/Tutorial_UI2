@@ -78,7 +78,7 @@ bool TextClass::Initialize(IDXGISwapChain* pSwapChain)
 
 	//폰트 설정
 	result = m_dwFactory->CreateTextFormat(
-		L"나눔스퀘어 네오 OTF",	//폰트 이름
+		L"굴림",	//폰트 이름
 		NULL,					//폰트 컬렉션에 대한 포인터 주소 NULL은 시스템 폰트 컬렉션
 		DWRITE_FONT_WEIGHT::DWRITE_FONT_WEIGHT_NORMAL,//폰트 두께
 		DWRITE_FONT_STYLE::DWRITE_FONT_STYLE_NORMAL,//폰트 스타일
@@ -113,14 +113,46 @@ bool TextClass::Initialize(IDXGISwapChain* pSwapChain)
 	return true;
 }
 
+HRESULT TextClass::CreateTextFormat(IDWriteTextFormat* pFormat, const wchar_t* fontName, DWRITE_FONT_WEIGHT weight, DWRITE_FONT_STYLE style, DWRITE_FONT_STRETCH stretch, float fontSize)
+{
+	HRESULT result;
+
+	//폰트 설정
+	result = m_dwFactory->CreateTextFormat(
+		fontName,	//폰트 이름
+		NULL,					//폰트 컬렉션에 대한 포인터 주소 NULL은 시스템 폰트 컬렉션
+		weight,//폰트 두께
+		style,//폰트 스타일
+		stretch,//폰트 스트레치
+		fontSize,					//폰트 사이즈
+		L"ko",					//지역 이름 ex) KO, EN
+		&pFormat		//텍스트 형식(IDWriteTextFormat)에 대한 포인터 주소를 반환한다
+	);
+
+	return result;
+}
+
+HRESULT TextClass::CreateTextBrush(ID2D1SolidColorBrush* pBrush, float r, float g, float b, float a)
+{
+	HRESULT result;
+
+	//기본 브러쉬 설정 (초록)
+	result = m_renderTarget->CreateSolidColorBrush(
+		D2D1::ColorF(D2D1::ColorF(r, g, b, a)),
+		&pBrush
+	);
+
+	return result;
+}
+
 //텍스트 렌더링 기본 폰트, 컬러
-void TextClass::RenderText(const wchar_t* ptext, const float& x, const float& y, const float& width, const float& height)
+void TextClass::RenderText(const wchar_t* ptext, const D2D1_RECT_F& renderRect)
 {
 	m_renderTarget->DrawTextW(
 		ptext,
 		wcslen(ptext),
 		m_defaultFormat,
-		D2D1::RectF(x, y, x + width, y + height), 
+		renderRect,
 		m_defaultBrush,
 		D2D1_DRAW_TEXT_OPTIONS_NONE,
 		DWRITE_MEASURING_MODE_NATURAL
@@ -128,13 +160,13 @@ void TextClass::RenderText(const wchar_t* ptext, const float& x, const float& y,
 }
 
 //텍스트 렌더링 지정 폰트, 컬러
-void TextClass::RenderText(const wchar_t* ptext, const float& x, const float& y, const float& width, const float& height, IDWriteTextFormat* pformat, ID2D1SolidColorBrush* pbrush)
+void TextClass::RenderText(const wchar_t* ptext, const D2D1_RECT_F& renderRect, IDWriteTextFormat* pformat, ID2D1SolidColorBrush* pbrush)
 {
 	m_renderTarget->DrawTextW(
 		ptext,
 		wcslen(ptext),
 		pformat,
-		D2D1::RectF(x, y, x + width, y + height),
+		renderRect,
 		pbrush,
 		D2D1_DRAW_TEXT_OPTIONS_NONE,
 		DWRITE_MEASURING_MODE_NATURAL

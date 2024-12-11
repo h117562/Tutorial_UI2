@@ -2,6 +2,7 @@
 #define _RECT_TRANSFORM_
 
 #include <DirectXMath.h>
+#include <d2d1.h>
 
 #include "Global.h"
 
@@ -30,8 +31,7 @@ protected:
 		m_scale = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
 		m_align = ALIGNMENT_CENTER;
 		m_worldMatrix = DirectX::XMMatrixIdentity();
-		m_screenX = 0;
-		m_screenY = 0;
+		m_screenArea = D2D1::RectF(0.0f, 0.0f, 100.0f, 100.0f);
 	}
 
 	virtual ~RectTransform()
@@ -39,34 +39,6 @@ protected:
 	}
 
 public:
-	//월드 행렬 초기화
-	virtual void UpdateWorldMatrix()
-	{
-		DirectX::XMMATRIX pos, rot, scale;
-
-		m_worldMatrix = DirectX::XMMatrixIdentity();
-		
-		pos = Alignment(SCREEN_WIDTH, SCREEN_HEIGHT, m_align);
-		rot = DirectX::XMMatrixRotationRollPitchYaw(m_rotation.x, m_rotation.y, m_rotation.z);
-		scale = DirectX::XMMatrixScaling(m_scale.x, m_scale.y, m_scale.z);
-
-		m_worldMatrix = DirectX::XMMatrixMultiply(m_worldMatrix, pos);
-		m_worldMatrix = DirectX::XMMatrixMultiply(m_worldMatrix, scale);
-		m_worldMatrix = DirectX::XMMatrixMultiply(m_worldMatrix, rot);
-
-		//스크린 좌표도 업데이트
-		m_screenX = m_worldPosition.x * m_scale.x;
-		m_screenY = m_worldPosition.y * -m_scale.y;
-
-		return;
-	}
-
-	//월드 행렬 가져오기
-	virtual DirectX::XMMATRIX GetWorldMatrix()
-	{
-		return m_worldMatrix;
-	}
-
 	//상대 위치 설정
 	virtual void SetLocalPosition(const float& x, const float& y, const float& z)
 	{
@@ -91,13 +63,26 @@ public:
 		m_align = flag;
 	}
 
-	//상대 위치 얻기
+	//객체의 위치, 회전 등을 반영한 월드 좌표계, 스크린 좌표계 데이터 최신화
+	virtual void UpdateTransform()
+	{
+		UpdateWorldMatrix();
+		UpdateScreenArea();
+	}
+
+	//월드 행렬 가져오기
+	virtual DirectX::XMMATRIX GetWorldMatrix()
+	{
+		return m_worldMatrix;
+	}
+
+	//상대 좌표 얻기
 	virtual DirectX::XMFLOAT3 GetLocalPosition()
 	{
 		return m_localPosition;
 	}
 
-	//절대 위치 얻기
+	//절대 좌표 얻기
 	virtual DirectX::XMFLOAT3 GetWorldPosition()
 	{
 		return m_worldPosition;
@@ -122,11 +107,9 @@ public:
 	}
 
 	//스크린 좌표 얻기
-	virtual void GetScreenPos(float& x, float& y)
+	virtual D2D1_RECT_F GetScreenArea()
 	{
-		x = m_screenX;
-		y = m_screenY;
-		return;
+		return m_screenArea;
 	}
 
 private:
@@ -200,14 +183,45 @@ private:
 		return static_cast<float>(resolution) / (scale * 2.0f) - 0.5f;
 	}
 
+	//월드 행렬 업데이트
+	virtual void UpdateWorldMatrix()
+	{
+		DirectX::XMMATRIX pos, rot, scale;
+
+		m_worldMatrix = DirectX::XMMatrixIdentity();
+
+		pos = Alignment(SCREEN_WIDTH, SCREEN_HEIGHT, m_align);
+		rot = DirectX::XMMatrixRotationRollPitchYaw(m_rotation.x, m_rotation.y, m_rotation.z);
+		scale = DirectX::XMMatrixScaling(m_scale.x, m_scale.y, m_scale.z);
+
+		m_worldMatrix = DirectX::XMMatrixMultiply(m_worldMatrix, pos);
+		m_worldMatrix = DirectX::XMMatrixMultiply(m_worldMatrix, scale);
+		m_worldMatrix = DirectX::XMMatrixMultiply(m_worldMatrix, rot);
+
+		return;
+	}
+
+	//스크린 좌표 업데이트
+	virtual void UpdateScreenArea()
+	{
+		m_screenArea = D2D1::RectF(
+			m_worldPosition.x * m_scale.x + (SCREEN_WIDTH - m_scale.x) / 2,
+			m_worldPosition.y * -m_scale.y + (SCREEN_HEIGHT - m_scale.y) / 2,
+			m_worldPosition.x * m_scale.x + (SCREEN_WIDTH - m_scale.x) / 2 + m_scale.x,
+			SCREEN_HEIGHT//어차피 범위 지정해줘도 글자가 길면 뚫고 나가므로 최대치로 고정
+		);
+
+		return;
+	}
+
 private:
 	DirectX::XMMATRIX m_worldMatrix;
 	DirectX::XMFLOAT3 m_localPosition;
 	DirectX::XMFLOAT3 m_worldPosition;
 	DirectX::XMFLOAT3 m_rotation;
 	DirectX::XMFLOAT3 m_scale;
+	D2D1_RECT_F m_screenArea;
 	unsigned int m_align;
-	float m_screenX, m_screenY;
 };
 
 #endif

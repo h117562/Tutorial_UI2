@@ -6,6 +6,7 @@
 #include "InputClass.h"
 #include "ShaderManager.h"
 #include "CameraClass.h"
+#include "EventClass.h"
 
 //Elements
 #include "Button.h"
@@ -19,7 +20,7 @@ public:
 	TestCanvas();
 	~TestCanvas();
 
-	bool Initialize(ID3D11Device*);
+	bool Initialize(ID3D11Device*, TextClass*);
 	void Frame(D3DClass*, HWND, ShaderManager*, TextClass*, CameraClass*);
 	bool Render(D3DClass*, TextClass*, ShaderManager*, const XMMATRIX&, const XMMATRIX&);
 	void ToggleActive();

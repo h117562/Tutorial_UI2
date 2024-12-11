@@ -70,7 +70,7 @@ bool ApplicationClass::Initialize(HWND hwnd)
 	}
 
 	//UI 매니저 초기화
-	result = m_uiManager->Initialize(m_Direct3D);
+	result = m_uiManager->Initialize(m_Direct3D, m_TextClass);
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the UI Manager.", L"Error", MB_OK);

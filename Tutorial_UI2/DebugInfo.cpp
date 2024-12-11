@@ -140,30 +140,30 @@ void DebugInfo::Frame(TextClass* pTextClass, CameraClass* pCameraClass)
 void DebugInfo::Render(TextClass* pTextClass)
 {
 	//FPS 정보 출력
-	pTextClass->RenderText(m_fpsString, 0, 0, 800, 400);
+	pTextClass->RenderText(m_fpsString, D2D1::RectF(0.0f, 0.0f, 800.0f, 400.0f));
 
 	//비디오 카드 정보를 출력
-	pTextClass->RenderText(m_videoNameString, 0, 30, 800, 400);
-	pTextClass->RenderText(m_memoryString, 0, 60, 800, 400);
+	pTextClass->RenderText(m_videoNameString, D2D1::RectF(0.0f, 30.0f, 800.0f, 400.0f));
+	pTextClass->RenderText(m_memoryString, D2D1::RectF(0.0f, 60.0f, 800.0f, 400.0f));
 
 	//카메라 위치 정보를 출력
-	pTextClass->RenderText(m_stringPX, 0, 120, 800, 400);
-	pTextClass->RenderText(m_stringPY, 0, 150, 800, 400);
-	pTextClass->RenderText(m_stringPZ, 0, 180, 800, 400);
-	pTextClass->RenderText(m_stringRX, 0, 210, 800, 400);
-	pTextClass->RenderText(m_stringRY, 0, 240, 800, 400);
-	pTextClass->RenderText(m_stringRZ, 0, 270, 800, 400);
+	pTextClass->RenderText(m_stringPX, D2D1::RectF(0.0f, 120.0f, 800.0f, 400.0f));
+	pTextClass->RenderText(m_stringPY, D2D1::RectF(0.0f, 150.0f, 800.0f, 400.0f));
+	pTextClass->RenderText(m_stringPZ, D2D1::RectF(0.0f, 180.0f, 800.0f, 400.0f));
+	pTextClass->RenderText(m_stringRX, D2D1::RectF(0.0f, 210.0f, 800.0f, 400.0f));
+	pTextClass->RenderText(m_stringRY, D2D1::RectF(0.0f, 240.0f, 800.0f, 400.0f));
+	pTextClass->RenderText(m_stringRZ, D2D1::RectF(0.0f, 270.0f, 800.0f, 400.0f));
 
 	//마우스 좌표 출력
-	pTextClass->RenderText(m_stringMX, 0, 300, 800, 400);
-	pTextClass->RenderText(m_stringMY, 0, 330, 800, 400);
+	pTextClass->RenderText(m_stringMX, D2D1::RectF(0.0f, 300.0f, 800.0f, 400.0f));
+	pTextClass->RenderText(m_stringMY, D2D1::RectF(0.0f, 330.0f, 800.0f, 400.0f));
 }
 
 void DebugInfo::GetFps()
 {
 	m_count++;
 
-	if (timeGetTime() >= (m_startTime + 1000))
+	if (timeGetTime() >= (m_startTime + 1000)) //winmm.lib 필요
 	{
 		m_fps = m_count;
 		m_count = 0;

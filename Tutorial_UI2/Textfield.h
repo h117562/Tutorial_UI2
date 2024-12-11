@@ -13,6 +13,23 @@ public:
 	{
 		m_text = L"";
 		m_textFieldState = TextFieldState::IDLE;
+		m_textFormat = nullptr;
+		m_textBrush = nullptr;
+	}
+
+	~TextField()
+	{
+		if (m_textFormat)
+		{
+			m_textFormat->Release();
+			m_textFormat = nullptr;
+		}
+
+		if (m_textBrush)
+		{
+			m_textBrush->Release();
+			m_textBrush = nullptr;
+		}
 	}
 
 	HRESULT Initialize(ID3D11Device* pDevice, const wchar_t* idleTexturePath, const wchar_t* focusTexturePath)
@@ -84,16 +101,27 @@ public:
 			Draw(pDeviceContext, 1);//1번째 텍스쳐 지정해서 그리기
 		}
 
-		float x, y;
+		if (m_textFormat == nullptr || m_textBrush == nullptr)
+		{
+			pTextClass->RenderText(m_text.c_str(), GetScreenArea());
+		}
+		else
+		{
+			pTextClass->RenderText(m_text.c_str(), GetScreenArea(), m_textFormat, m_textBrush);
+		}
 
-		GetScreenPos(x, y);
-
-		x = 100.0f;
-		y = 0.0f;
-		////////////////////////////////위치 조정 안돼요 마저하셈
-		pTextClass->RenderText(m_text.c_str(), x, y, 300, 300);
 
 		return true;
+	}
+
+	IDWriteTextFormat* GetTextFormat()
+	{
+		return m_textFormat;
+	}
+
+	ID2D1SolidColorBrush* GetTextBrush()
+	{
+		return m_textBrush;
 	}
 
 private:
@@ -117,6 +145,8 @@ private:
 private:
 	std::wstring m_text;
 	TextFieldState m_textFieldState;
+	IDWriteTextFormat* m_textFormat;
+	ID2D1SolidColorBrush* m_textBrush;
 };
 
 #endif

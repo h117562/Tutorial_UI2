@@ -1,8 +1,6 @@
 #ifndef _RECT_TEXTURE_2D_
 #define _RECT_TEXTURE_2D_
 
-#pragma comment(lib, "d3d11.lib")
-
 #include <d3d11.h>
 #include <DirectXMath.h>
 #include <DirectXCollision.h>
@@ -141,13 +139,13 @@ protected://상속 받은 클래스에서만 사용가능하게
 		return result;
 	}
 
-	virtual void Draw(ID3D11DeviceContext* pDeviceContext, const unsigned int& flag)
+	virtual void Draw(ID3D11DeviceContext* pDeviceContext, const unsigned int& index)
 	{
 		ID3D11ShaderResourceView* srv = nullptr;
 
-		if (m_textureCount >= flag)
+		if (m_textureCount >= index)
 		{
-			srv = m_textures[flag].GetResourceView();
+			srv = m_textures[index].GetResourceView();
 		}
 
 		pDeviceContext->IASetVertexBuffers(0, 1, &m_vertexBuffer, &m_stride, &m_offset);//버퍼를 인풋 어셈블러에 바인딩

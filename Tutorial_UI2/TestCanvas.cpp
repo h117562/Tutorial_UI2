@@ -29,8 +29,7 @@ TestCanvas::~TestCanvas()
 	}
 }
 
-#include "EventClass.h"
-bool TestCanvas::Initialize(ID3D11Device* pDevice)
+bool TestCanvas::Initialize(ID3D11Device* pDevice, TextClass* pTextClass)
 {
 	HRESULT result;
 	
@@ -55,19 +54,19 @@ bool TestCanvas::Initialize(ID3D11Device* pDevice)
 
 	m_btn[0].SetScale(100, 100, 1);
 	m_btn[0].SetAlign(ALIGNMENT_LEFT);
-	m_btn[0].UpdateWorldMatrix();
+	m_btn[0].UpdateTransform();
 
 	m_btn[1].SetScale(100, 100, 1);
 	m_btn[1].SetAlign(ALIGNMENT_RIGHT);
-	m_btn[1].UpdateWorldMatrix();
+	m_btn[1].UpdateTransform();
 
 	m_btn[2].SetScale(100, 200, 1);
 	m_btn[2].SetAlign(ALIGNMENT_TOP);
-	m_btn[2].UpdateWorldMatrix();
+	m_btn[2].UpdateTransform();
 
 	m_btn[3].SetScale(100, 100, 1);
 	m_btn[3].SetAlign(ALIGNMENT_BOTTOM);
-	m_btn[3].UpdateWorldMatrix();
+	m_btn[3].UpdateTransform();
 
 	m_plane = new Plane;
 	if (!m_plane)
@@ -82,7 +81,7 @@ bool TestCanvas::Initialize(ID3D11Device* pDevice)
 	}
 
 	m_plane->SetScale(500, 500, 1);
-	m_plane->UpdateWorldMatrix();
+	m_plane->UpdateTransform();
 
 	m_textField = new TextField;
 	if (!m_textField)
@@ -99,7 +98,30 @@ bool TestCanvas::Initialize(ID3D11Device* pDevice)
 	m_textField->SetScale(300, 100, 1);
 	m_textField->SetAlign(ALIGNMENT_RIGHT_BOTTOM);
 	m_textField->SetLocalPosition(-100, 100, 0);
-	m_textField->UpdateWorldMatrix();
+	m_textField->UpdateTransform();
+
+	result = pTextClass->CreateTextFormat(m_textField->GetTextFormat(),
+		L"¹ÙÅÁ", 
+		DWRITE_FONT_WEIGHT::DWRITE_FONT_WEIGHT_BOLD,
+		DWRITE_FONT_STYLE::DWRITE_FONT_STYLE_NORMAL, 
+		DWRITE_FONT_STRETCH::DWRITE_FONT_STRETCH_NORMAL, 
+		16.0f);
+	if (FAILED(result))
+	{
+		return false;
+	}
+
+	//result = m_textField->GetTextFormat()->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+	//if (FAILED(result))
+	//{
+	//	return false;
+	//}
+
+	result = pTextClass->CreateTextBrush(m_textField->GetTextBrush(), 1.0f, 0.3f, 0.6f, 1.0f);
+	if (FAILED(result))
+	{
+		return false;
+	}
 
 	return true;
 }

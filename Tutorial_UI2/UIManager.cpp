@@ -12,7 +12,7 @@ UIManager::UIManager(const UIManager& other)
 {
 }
 
-bool UIManager::Initialize(D3DClass* pD3Dclass)
+bool UIManager::Initialize(D3DClass* pD3Dclass, TextClass* pTextClass)
 {
 	bool result;
 
@@ -25,7 +25,7 @@ bool UIManager::Initialize(D3DClass* pD3Dclass)
 
 	EventClass::GetInstance().Subscribe(UI_EVENT::TOGGLE_DEBUG_MODE, [&]() {m_debugUI.ToggleActive(); });
 
-	result = m_canvas.Initialize(pD3Dclass->GetDevice());
+	result = m_canvas.Initialize(pD3Dclass->GetDevice(), pTextClass);
 	if (!result)
 	{
 		return false;

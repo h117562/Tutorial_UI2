@@ -1,8 +1,6 @@
 #ifndef _DEBUG_INFO_H_
 #define _DEBUG_INFO_H_
 
-#pragma comment(lib, "winmm.lib")
-
 #include <DirectXMath.h>
 
 #include "D3DClass.h"

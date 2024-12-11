@@ -116,7 +116,7 @@ bool TestCanvas::Initialize(ID3D11Device* pDevice, TextClass* pTextClass)
 	//{
 	//	return false;
 	//}
-
+	///////////////////////////쉐이더 리소스 뷰 처럼 더블 포인터라 제대로 폰트 적용이 안되는 현상이 있으니 내일 마저 고쳐
 	result = pTextClass->CreateTextBrush(m_textField->GetTextBrush(), 1.0f, 0.3f, 0.6f, 1.0f);
 	if (FAILED(result))
 	{

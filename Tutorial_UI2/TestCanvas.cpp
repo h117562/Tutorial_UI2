@@ -4,7 +4,8 @@ TestCanvas::TestCanvas()
 {
 	m_btn = 0;
 	m_plane = 0;
-	m_textField = 0;
+	m_textBox = 0;
+	m_textBox2 = 0;
 	m_active = true;
 }
 
@@ -22,10 +23,16 @@ TestCanvas::~TestCanvas()
 		m_plane = nullptr;
 	}
 
-	if (m_textField)
+	if (m_textBox)
 	{
-		delete m_textField;
-		m_textField = nullptr;
+		delete m_textBox;
+		m_textBox = nullptr;
+	}
+
+	if (m_textBox2)
+	{
+		delete m_textBox2;
+		m_textBox2 = nullptr;
 	}
 }
 
@@ -83,24 +90,25 @@ bool TestCanvas::Initialize(ID3D11Device* pDevice, TextClass* pTextClass)
 	m_plane->SetScale(500, 500, 1);
 	m_plane->UpdateTransform();
 
-	m_textField = new TextField;
-	if (!m_textField)
+	//////TextBox1 Initialize
+	m_textBox = new TextBox;
+	if (!m_textBox)
 	{
 		return false;
 	}
 
-	result = m_textField->Initialize(pDevice, L"..//data//assets//panel-header-1.png", L"..//data//assets//panel-header-2.png");
+	result = m_textBox->Initialize(pDevice, L"..//data//assets//panel-header-1.png", L"..//data//assets//panel-header-2.png");
 	if (FAILED(result))
 	{
 		return false;
 	}
 
-	m_textField->SetScale(300, 100, 1);
-	m_textField->SetAlign(ALIGNMENT_RIGHT_BOTTOM);
-	m_textField->SetLocalPosition(-100, 100, 0);
-	m_textField->UpdateTransform();
+	m_textBox->SetScale(300, 100, 1);
+	m_textBox->SetAlign(ALIGNMENT_RIGHT_BOTTOM);
+	m_textBox->SetLocalPosition(-100, 100, 0);
+	m_textBox->UpdateTransform();
 
-	result = pTextClass->CreateTextFormat(m_textField->GetTextFormat(),
+	result = pTextClass->CreateTextFormat(m_textBox->GetTextFormat(),
 		L"바탕", 
 		DWRITE_FONT_WEIGHT::DWRITE_FONT_WEIGHT_BOLD,
 		DWRITE_FONT_STYLE::DWRITE_FONT_STYLE_NORMAL, 
@@ -111,13 +119,46 @@ bool TestCanvas::Initialize(ID3D11Device* pDevice, TextClass* pTextClass)
 		return false;
 	}
 
-	//result = m_textField->GetTextFormat()->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
-	//if (FAILED(result))
-	//{
-	//	return false;
-	//}
-	///////////////////////////쉐이더 리소스 뷰 처럼 더블 포인터라 제대로 폰트 적용이 안되는 현상이 있으니 내일 마저 고쳐
-	result = pTextClass->CreateTextBrush(m_textField->GetTextBrush(), 1.0f, 0.3f, 0.6f, 1.0f);
+	m_textBox->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+
+	result = pTextClass->CreateTextBrush(m_textBox->GetTextBrush(), 1.0f, 0.3f, 0.6f, 1.0f);
+	if (FAILED(result))
+	{
+		return false;
+	}
+
+	//////TextBox2 Initialize
+	m_textBox2 = new TextBox;
+	if (!m_textBox2)
+	{
+		return false;
+	}
+
+	result = m_textBox2->Initialize(pDevice, L"..//data//assets//panel-header-1.png", L"..//data//assets//panel-header-2.png");
+	if (FAILED(result))
+	{
+		return false;
+	}
+
+	m_textBox2->SetScale(100, 300, 1);
+	m_textBox2->SetAlign(ALIGNMENT_RIGHT_TOP);
+	m_textBox2->SetLocalPosition(-100, -100, 0);
+	m_textBox2->UpdateTransform();
+
+	result = pTextClass->CreateTextFormat(m_textBox2->GetTextFormat(),
+		L"궁서체",
+		DWRITE_FONT_WEIGHT::DWRITE_FONT_WEIGHT_BOLD,
+		DWRITE_FONT_STYLE::DWRITE_FONT_STYLE_NORMAL,
+		DWRITE_FONT_STRETCH::DWRITE_FONT_STRETCH_NORMAL,
+		20.0f);
+	if (FAILED(result))
+	{
+		return false;
+	}
+
+	m_textBox2->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_TRAILING);
+
+	result = pTextClass->CreateTextBrush(m_textBox2->GetTextBrush(), 0.0f, 0.8f, 0.5f, 1.0f);
 	if (FAILED(result))
 	{
 		return false;
@@ -144,8 +185,8 @@ void TestCanvas::Frame(D3DClass* pD3DClass, HWND hwnd, ShaderManager* pShaderMan
 		m_btn[i].Frame(view, proj, mouseX, mouseY);
 	}
 
-	m_textField->Frame(view, proj, mouseX, mouseY);
-
+	m_textBox->Frame(view, proj, mouseX, mouseY);
+	m_textBox2->Frame(view, proj, mouseX, mouseY);
 
 	state = m_btn[0].IsPressed();
 	if (state)
@@ -199,7 +240,13 @@ bool TestCanvas::Render(D3DClass* pD3DClass,TextClass* pTextClass, ShaderManager
 		}
 	}
 
-	result = m_textField->Render(pD3DClass->GetDeviceContext(), pTextClass, pShaderManager->GetUIShader(), m_textField->GetWorldMatrix(), view, proj);
+	result = m_textBox->Render(pD3DClass->GetDeviceContext(), pTextClass, pShaderManager->GetUIShader(), m_textBox->GetWorldMatrix(), view, proj);
+	if (!result)
+	{
+		return false;
+	}
+
+	result = m_textBox2->Render(pD3DClass->GetDeviceContext(), pTextClass, pShaderManager->GetUIShader(), m_textBox2->GetWorldMatrix(), view, proj);
 	if (!result)
 	{
 		return false;

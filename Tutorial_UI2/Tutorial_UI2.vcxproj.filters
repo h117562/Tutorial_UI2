@@ -134,7 +134,7 @@
     <ClInclude Include="Slider.h">
       <Filter>UI\Elements</Filter>
     </ClInclude>
-    <ClInclude Include="TextField.h">
+    <ClInclude Include="TextBox.h">
       <Filter>UI\Elements</Filter>
     </ClInclude>
     <ClInclude Include="RectTransform.h">

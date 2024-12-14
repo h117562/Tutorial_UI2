@@ -380,15 +380,19 @@ bool SystemClass::SearchOptions(string target, const char* str)
 LRESULT CALLBACK SystemClass::MessageHandler(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
 
-	if (InputClass::GetInstance().GetTextInputEnabled())
+	if (msg == WM_CHAR)
 	{
-		if (msg == WM_CHAR)
+		if (wparam == VK_BACK)
+		{
+			InputClass::GetInstance().RemoveLastChar();
+		}
+		else
 		{
 			//글자가 입력될 때 마다 inputClass의 멤버 변수에 저장
 			InputClass::GetInstance().AddText(static_cast<wchar_t>(wparam));
 		}
 	}
-
+	
 	return DefWindowProc(hwnd, msg, wparam, lparam);
 }
 

@@ -113,7 +113,7 @@ bool TextClass::Initialize(IDXGISwapChain* pSwapChain)
 	return true;
 }
 
-HRESULT TextClass::CreateTextFormat(IDWriteTextFormat* pFormat, const wchar_t* fontName, DWRITE_FONT_WEIGHT weight, DWRITE_FONT_STYLE style, DWRITE_FONT_STRETCH stretch, float fontSize)
+HRESULT TextClass::CreateTextFormat(IDWriteTextFormat** pFormat, const wchar_t* fontName, DWRITE_FONT_WEIGHT weight, DWRITE_FONT_STYLE style, DWRITE_FONT_STRETCH stretch, float fontSize)
 {
 	HRESULT result;
 
@@ -126,24 +126,26 @@ HRESULT TextClass::CreateTextFormat(IDWriteTextFormat* pFormat, const wchar_t* f
 		stretch,//폰트 스트레치
 		fontSize,					//폰트 사이즈
 		L"ko",					//지역 이름 ex) KO, EN
-		&pFormat		//텍스트 형식(IDWriteTextFormat)에 대한 포인터 주소를 반환한다
+		pFormat		//텍스트 형식(IDWriteTextFormat)에 대한 포인터 주소를 반환한다
 	);
 
 	return result;
 }
 
-HRESULT TextClass::CreateTextBrush(ID2D1SolidColorBrush* pBrush, float r, float g, float b, float a)
+HRESULT TextClass::CreateTextBrush(ID2D1SolidColorBrush** pBrush, float r, float g, float b, float a)
 {
 	HRESULT result;
 
 	//기본 브러쉬 설정 (초록)
 	result = m_renderTarget->CreateSolidColorBrush(
 		D2D1::ColorF(D2D1::ColorF(r, g, b, a)),
-		&pBrush
+		pBrush
 	);
 
 	return result;
 }
+
+
 
 //텍스트 렌더링 기본 폰트, 컬러
 void TextClass::RenderText(const wchar_t* ptext, const D2D1_RECT_F& renderRect)

@@ -1,23 +1,23 @@
-#ifndef _TEXT_FIELD_
-#define _TEXT_FIELD_
+#ifndef _TEXT_BOX_
+#define _TEXT_BOX_
 
 #include "RectTransform.h"
 #include "RectTexture2D.h"
 #include "ShaderManager.h"
 #include "textclass.h"
 
-class TextField : public RectTransform , public RectTexture2D
+class TextBox : public RectTransform , public RectTexture2D
 {
 public:
-	TextField()
+	TextBox()
 	{
 		m_text = L"";
-		m_textFieldState = TextFieldState::IDLE;
+		m_textBoxState = TextBoxState::IDLE;
 		m_textFormat = nullptr;
 		m_textBrush = nullptr;
 	}
 
-	~TextField()
+	~TextBox()
 	{
 		if (m_textFormat)
 		{
@@ -63,15 +63,15 @@ public:
 
 			if (state)
 			{
-				m_textFieldState = TextFieldState::FOCUS;
-				InputClass::GetInstance().SetTextInputEnabled(true);
+				m_textBoxState = TextBoxState::FOCUS;
+				InputClass::GetInstance().SetText(L"");
 
 				return;
 			}
 			else
 			{
-				m_textFieldState = TextFieldState::IDLE;
-				InputClass::GetInstance().SetTextInputEnabled(false);
+				m_textBoxState = TextBoxState::IDLE;
+				InputClass::GetInstance().SetText(L"");
 
 				return;
 			}
@@ -92,7 +92,7 @@ public:
 			return false;
 		}
 
-		if (m_textFieldState != TextFieldState::FOCUS)
+		if (m_textBoxState != TextBoxState::FOCUS)
 		{
 			Draw(pDeviceContext, 0);//0번째 텍스쳐 지정해서 그리기
 		}
@@ -114,18 +114,26 @@ public:
 		return true;
 	}
 
-	IDWriteTextFormat* GetTextFormat()
+	void SetTextAlignment(DWRITE_TEXT_ALIGNMENT flag)
 	{
-		return m_textFormat;
+		if (m_textFormat)
+		{
+			m_textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+		}
 	}
 
-	ID2D1SolidColorBrush* GetTextBrush()
+	IDWriteTextFormat** GetTextFormat()
 	{
-		return m_textBrush;
+		return &m_textFormat;
+	}
+
+	ID2D1SolidColorBrush** GetTextBrush()
+	{
+		return &m_textBrush;
 	}
 
 private:
-	enum struct TextFieldState
+	enum struct TextBoxState
 	{
 		IDLE,
 		FOCUS
@@ -134,7 +142,7 @@ private:
 	void UpdateText()
 	{
 		//입력 가능 상태일 때 InputClass의 텍스트를 가져옴
-		if (m_textFieldState != TextFieldState::IDLE)
+		if (m_textBoxState != TextBoxState::IDLE)
 		{
 			m_text = InputClass::GetInstance().GetText();
 
@@ -144,7 +152,7 @@ private:
 
 private:
 	std::wstring m_text;
-	TextFieldState m_textFieldState;
+	TextBoxState m_textBoxState;
 	IDWriteTextFormat* m_textFormat;
 	ID2D1SolidColorBrush* m_textBrush;
 };

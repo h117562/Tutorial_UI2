@@ -332,19 +332,11 @@ bool InputClass::GetRightMouseButtonReleased()
 	return false;
 }
 
-bool InputClass::GetTextInputEnabled()
-{
-	return m_textInputEnabled;
-}
-
-void InputClass::SetTextInputEnabled(bool state)
-{
-	m_textInputEnabled = state;
-}
-
 void InputClass::AddText(const wchar_t text)
 {
-	if (wcslen(m_text) < 256)
+	unsigned int len = wcslen(m_text);
+
+	if (len < 255)//빈칸 한자리가 남을 때 까지
 	{
 		wcscat_s(m_text, 256, &text);
 	}
@@ -354,10 +346,27 @@ void InputClass::AddText(const wchar_t text)
 
 void InputClass::SetText(const wchar_t* text)
 {
-	if (wcslen(text) < 256)
+	unsigned int len = wcslen(text);
+
+	if (len < 256)//배열 길이를 초과하지 않을 경우
 	{
 		wcscpy_s(m_text, text);
 	}
+
+	return;
+}
+
+void InputClass::RemoveLastChar()
+{
+	unsigned int len = wcslen(m_text);
+	
+	//저장된 문자가 없을 경우 함수 종료
+	if (len == 0)
+	{
+		return;
+	}
+
+	m_text[len - 1] = L'\0';
 
 	return;
 }

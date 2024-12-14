@@ -12,7 +12,7 @@
 #include "Button.h"
 #include "Plane.h"
 #include "Slider.h"
-#include "TextField.h"
+#include "TextBox.h"
 
 class TestCanvas
 {
@@ -30,7 +30,8 @@ public:
 private:
 	Button* m_btn;
 	Plane* m_plane;
-	TextField* m_textField;
+	TextBox* m_textBox;
+	TextBox* m_textBox2;
 
 	bool m_active;
 };

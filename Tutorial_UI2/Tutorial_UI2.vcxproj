@@ -166,7 +166,7 @@
     <ClInclude Include="SystemClass.h" />
     <ClInclude Include="TestCanvas.h" />
     <ClInclude Include="TextClass.h" />
-    <ClInclude Include="TextField.h" />
+    <ClInclude Include="TextBox.h" />
     <ClInclude Include="TextureResource.h" />
     <ClInclude Include="UIShaderClass.h" />
     <ClInclude Include="UIManager.h" />

@@ -48,10 +48,9 @@ public:
 	void GetNormalizedMousePosition(float&, float&);
 	void GetMouseDelta(float&, float&);
 
-	bool GetTextInputEnabled();
-	void SetTextInputEnabled(bool);
 	void SetText(const wchar_t*);
 	void AddText(const wchar_t);
+	void RemoveLastChar();
 	const wchar_t* GetText();
 
 private:

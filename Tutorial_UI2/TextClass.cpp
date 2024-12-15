@@ -119,14 +119,14 @@ HRESULT TextClass::CreateTextFormat(IDWriteTextFormat** pFormat, const wchar_t* 
 
 	//폰트 설정
 	result = m_dwFactory->CreateTextFormat(
-		fontName,	//폰트 이름
-		NULL,					//폰트 컬렉션에 대한 포인터 주소 NULL은 시스템 폰트 컬렉션
-		weight,//폰트 두께
-		style,//폰트 스타일
-		stretch,//폰트 스트레치
-		fontSize,					//폰트 사이즈
-		L"ko",					//지역 이름 ex) KO, EN
-		pFormat		//텍스트 형식(IDWriteTextFormat)에 대한 포인터 주소를 반환한다
+		fontName,		//폰트 이름
+		NULL,			//폰트 컬렉션에 대한 포인터 주소 NULL은 시스템 폰트 컬렉션
+		weight,			//폰트 두께
+		style,			//폰트 스타일
+		stretch,		//폰트 스트레치
+		fontSize,		//폰트 사이즈
+		L"ko",			//지역 이름 ex) KO, EN
+		pFormat			//텍스트 형식(IDWriteTextFormat)에 대한 포인터 주소를 반환한다
 	);
 
 	return result;

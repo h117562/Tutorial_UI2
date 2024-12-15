@@ -384,6 +384,7 @@ LRESULT CALLBACK SystemClass::MessageHandler(HWND hwnd, UINT msg, WPARAM wparam,
 	{
 		if (wparam == VK_BACK)
 		{
+			//백스페이스의 경우 '\b'가 저장되므로 예외로 문자를 지우는 함수 호출 (\n는 괜찮음)
 			InputClass::GetInstance().RemoveLastChar();
 		}
 		else

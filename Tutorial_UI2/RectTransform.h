@@ -28,92 +28,92 @@ protected:
 		m_localPosition = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
 		m_worldPosition = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
 		m_rotation = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
-		m_scale = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
+		m_scale = DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f);
 		m_align = ALIGNMENT_CENTER;
 		m_worldMatrix = DirectX::XMMatrixIdentity();
 		m_screenArea = D2D1::RectF(0.0f, 0.0f, 100.0f, 100.0f);
 	}
 
-	virtual ~RectTransform()
+	~RectTransform()
 	{
 	}
 
 public:
 	//상대 위치 설정
-	virtual void SetLocalPosition(const float& x, const float& y, const float& z)
+	void SetLocalPosition(const float& x, const float& y, const float& z)
 	{
 		m_localPosition = DirectX::XMFLOAT3(x, y, z);
 	}
 
 	//회전 설정
-	virtual void SetRotation(const float& x, const float& y, const float& z)
+	void SetRotation(const float& x, const float& y, const float& z)
 	{
 		m_rotation = DirectX::XMFLOAT3(x, y, z);
 	}
 
 	//크기 설정
-	virtual void SetScale(const float& x, const float& y, const float& z)
+	void SetScale(const float& x, const float& y, const float& z)
 	{
 		m_scale = DirectX::XMFLOAT3(x, y, z);
 	}
 
 	//정렬 설정
-	virtual void SetAlign(const unsigned int& flag)
+	void SetAlign(const unsigned int& flag)
 	{
 		m_align = flag;
 	}
 
 	//객체의 위치, 회전 등을 반영한 월드 좌표계, 스크린 좌표계 데이터 최신화
-	virtual void UpdateTransform()
+	void UpdateTransform()
 	{
 		UpdateWorldMatrix();
 		UpdateScreenArea();
 	}
 
 	//월드 행렬 가져오기
-	virtual DirectX::XMMATRIX GetWorldMatrix()
+	DirectX::XMMATRIX GetWorldMatrix()
 	{
 		return m_worldMatrix;
 	}
 
 	//상대 좌표 얻기
-	virtual DirectX::XMFLOAT3 GetLocalPosition()
+	DirectX::XMFLOAT3 GetLocalPosition()
 	{
 		return m_localPosition;
 	}
 
 	//절대 좌표 얻기
-	virtual DirectX::XMFLOAT3 GetWorldPosition()
+	DirectX::XMFLOAT3 GetWorldPosition()
 	{
 		return m_worldPosition;
 	}
 
 	//회전 얻기
-	virtual DirectX::XMFLOAT3 GetRotation()
+	DirectX::XMFLOAT3 GetRotation()
 	{
 		return m_rotation;
 	}
 
 	//크기 얻기
-	virtual DirectX::XMFLOAT3 GetScale()
+	DirectX::XMFLOAT3 GetScale()
 	{
 		return m_scale;
 	}
 
 	//정렬 얻기
-	virtual unsigned int GetAlign()
+	unsigned int GetAlign()
 	{
 		return m_align;
 	}
 
 	//스크린 좌표 얻기
-	virtual D2D1_RECT_F GetScreenArea()
+	D2D1_RECT_F GetScreenArea()
 	{
 		return m_screenArea;
 	}
 
 private:
-	virtual DirectX::XMMATRIX Alignment(const unsigned int& screenWidth, const unsigned int& screenHeight, const unsigned int& flag)
+	DirectX::XMMATRIX Alignment(const unsigned int& screenWidth, const unsigned int& screenHeight, const unsigned int& flag)
 	{
 		DirectX::XMMATRIX mat;
 		float x, y;
@@ -178,13 +178,18 @@ private:
 		return mat;
 	}
 
-	virtual float CalculateElementPosition(const unsigned int& resolution, const float& scale)
+	float CalculateElementPosition(const unsigned int& resolution, const float& scale)
 	{
+		if (scale < 1.0f)
+		{
+			return static_cast<float>(resolution) / 2.0f - 0.5f;
+		}
+
 		return static_cast<float>(resolution) / (scale * 2.0f) - 0.5f;
 	}
 
 	//월드 행렬 업데이트
-	virtual void UpdateWorldMatrix()
+	void UpdateWorldMatrix()
 	{
 		DirectX::XMMATRIX pos, rot, scale;
 
@@ -202,7 +207,7 @@ private:
 	}
 
 	//스크린 좌표 업데이트
-	virtual void UpdateScreenArea()
+	void UpdateScreenArea()
 	{
 		m_screenArea = D2D1::RectF(
 			m_worldPosition.x * m_scale.x + (SCREEN_WIDTH - m_scale.x) / 2,

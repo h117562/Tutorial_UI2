@@ -45,7 +45,7 @@ protected://상속 받은 클래스에서만 사용가능하게
 		m_indices[5] = 1;
 	}
 
-	virtual ~RectTexture2D()
+	~RectTexture2D()
 	{
 		if (m_indexBuffer)
 		{
@@ -78,7 +78,7 @@ protected://상속 받은 클래스에서만 사용가능하게
 		}
 	}
 
-	virtual HRESULT InitializeBuffer(ID3D11Device* pDevice)
+	HRESULT InitializeBuffer(ID3D11Device* pDevice)
 	{
 		HRESULT result;
 
@@ -120,7 +120,7 @@ protected://상속 받은 클래스에서만 사용가능하게
 		return S_OK;
 	}
 
-	virtual HRESULT SetTexture(ID3D11Device* pDevice, const wchar_t* filePath[], const unsigned int& count)
+	HRESULT SetTexture(ID3D11Device* pDevice, const wchar_t* filePath[], const unsigned int& count)
 	{
 		HRESULT result;
 
@@ -139,7 +139,7 @@ protected://상속 받은 클래스에서만 사용가능하게
 		return result;
 	}
 
-	virtual void Draw(ID3D11DeviceContext* pDeviceContext, const unsigned int& index)
+	void Draw(ID3D11DeviceContext* pDeviceContext, const unsigned int& index)
 	{
 		ID3D11ShaderResourceView* srv = nullptr;
 
@@ -154,12 +154,12 @@ protected://상속 받은 클래스에서만 사용가능하게
 		pDeviceContext->DrawIndexed(m_indexCount, 0, 0);//그리기
 	}
 
-	virtual bool RayCast(
+	bool RayCast(
 		const DirectX::XMMATRIX& world,
 		const DirectX::XMMATRIX& view,
 		const DirectX::XMMATRIX& projection,
 		const float& mouseX,
-		const float& mouseY) final
+		const float& mouseY)
 	{
 		bool result = false;
 		float dist = 0.0f;//충돌 거리
@@ -193,7 +193,7 @@ protected://상속 받은 클래스에서만 사용가능하게
 	}
 
 private:
-	virtual void GetRay(
+	void GetRay(
 		const DirectX::XMMATRIX& w,
 		const DirectX::XMMATRIX& v,
 		const DirectX::XMMATRIX& p,

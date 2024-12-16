@@ -1,5 +1,5 @@
 
-#pragma comment(linker , "/entry:WinMainCRTStartup /subsystem:console")
+//#pragma comment(linker , "/entry:WinMainCRTStartup /subsystem:console")
 
 #include <Windows.h>
 

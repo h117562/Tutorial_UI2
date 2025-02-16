@@ -189,6 +189,7 @@ void ApplicationClass::HandleInput(FrameTimer* pFrameTimer)
 		EventClass::GetInstance().Publish(UI_EVENT::TOGGLE_DEBUG_MODE);
 	}
 
+	//이벤트 클래스에 등록되어있는 동작을 F6 버튼을 눌렀을 때 호출
 	state = InputClass::GetInstance().GetKeyPressedAndRelease(DIK_F6);
 	if (state)
 	{

@@ -4,6 +4,7 @@
 #include "RectTransform.h"
 #include "RectTexture2D.h"
 #include "ShaderManager.h"
+#include "InputClass.h"
 #include "textclass.h"
 
 class TextBox : public RectTransform , public RectTexture2D

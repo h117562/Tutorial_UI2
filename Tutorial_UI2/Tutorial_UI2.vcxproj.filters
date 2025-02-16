@@ -34,11 +34,11 @@
     <Filter Include="UI\Elements">
       <UniqueIdentifier>{1f2d3711-a5d2-4ae7-a623-f195134aac8e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="UI\Elements\Components">
-      <UniqueIdentifier>{1cabc86f-e0e9-481b-b6af-b3b5deba92b5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Texture">
       <UniqueIdentifier>{5247796f-741d-4494-8bf7-d90d2e9ff076}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Components">
+      <UniqueIdentifier>{1cabc86f-e0e9-481b-b6af-b3b5deba92b5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -138,10 +138,10 @@
       <Filter>UI\Elements</Filter>
     </ClInclude>
     <ClInclude Include="RectTransform.h">
-      <Filter>UI\Elements\Components</Filter>
+      <Filter>UI\Components</Filter>
     </ClInclude>
     <ClInclude Include="RectTexture2D.h">
-      <Filter>UI\Elements\Components</Filter>
+      <Filter>UI\Components</Filter>
     </ClInclude>
     <ClInclude Include="TestCanvas.h">
       <Filter>UI</Filter>

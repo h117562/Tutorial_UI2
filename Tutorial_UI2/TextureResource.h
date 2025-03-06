@@ -1,5 +1,5 @@
-#ifndef _TEXTURE_RESOURCE_
-#define _TEXTURE_RESOURCE_
+#ifndef _TEXTURE_RESOURCE_H_
+#define _TEXTURE_RESOURCE_H_
 
 #pragma comment(lib, "../data/DirectXTex.lib")
 
